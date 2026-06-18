@@ -57,7 +57,14 @@ export function erfolgePruefen(state: GameState): void {
   if (neu) state.erfolge = neu
 }
 
-/** Einkommens-Faktor aus den erreichten Erfolgen (1 = keiner; je Erfolg +ERFOLG_BONUS). */
+/** Einkommens-Faktor aus den ABGEHOLTEN Erfolgen (1 = keiner; je abgeholtem Erfolg +ERFOLG_BONUS). */
 export function erfolgsFaktor(state: GameState): number {
-  return 1 + state.erfolge.length * ERFOLG_BONUS
+  const abgeholt = state.erfolgeAbgeholt ?? []
+  return 1 + abgeholt.length * ERFOLG_BONUS
+}
+
+/** Wie viele erreichte Erfolge noch zum Abholen bereitliegen (erreicht, aber Belohnung nicht aktiviert). */
+export function anzahlAbholbar(state: GameState): number {
+  const abgeholt = state.erfolgeAbgeholt ?? []
+  return state.erfolge.filter((id) => !abgeholt.includes(id)).length
 }

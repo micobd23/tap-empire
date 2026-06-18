@@ -74,8 +74,10 @@ export interface GameState {
   prestigeCount: number
   /** Ist der Auto-Käufer eingeschaltet? (Wirkt erst ab AUTO_KAUFER_AB_PRESTIGE.) */
   autoKauf: boolean
-  /** Ids der bereits erreichten Erfolge (dauerhaft, geben Einkommens-Bonus). */
+  /** Ids der bereits erreichten Erfolge (dauerhaft). Erreicht = bereit zum Abholen. */
   erfolge: string[]
+  /** Ids der abgeholten Erfolge — erst diese geben den Einkommens-Bonus (per Klick aktiviert). */
+  erfolgeAbgeholt: string[]
   /** Ids der freigeschalteten Welten (mindestens 'welt1'; weitere kosten Geld). */
   freigeschalteteWelten: string[]
   /** Zeitstempel des letzten Speicherns — für die Offline-Berechnung. */

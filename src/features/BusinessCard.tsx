@@ -116,11 +116,8 @@ export function BusinessCard({ id }: { id: string }) {
 
       <div className="min-w-0 flex-1">
         <div className="truncate font-medium text-slate-100">{b.name}</div>
-        <div className="flex items-center whitespace-nowrap text-sm text-emerald-400">
+        <div className="whitespace-nowrap text-sm text-emerald-400">
           +{formatGeld(ertragProSekunde)} € / s
-          {tempoFaktor < 1 && (
-            <span className="ml-1.5 text-amber-400" title={`Tempo ×${(1 / tempoFaktor).toFixed(2)}`}>⚡</span>
-          )}
         </div>
         {aktiv && !hatManager && (
           <button

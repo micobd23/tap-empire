@@ -64,29 +64,25 @@ export function BusinessList() {
       )}
 
       <div className="mb-2 flex gap-1">
-        {MODI.map((m) => (
+        {/* Kaufmenge als EIN kompakter Knopf, der durch ×1 → ×10 → ×100 → Max springt. */}
+        <button
+          onClick={() => setKaufModus(MODI[(MODI.indexOf(kaufModus) + 1) % MODI.length])}
+          title="Tippen wechselt die Kaufmenge: ×1 → ×10 → ×100 → Max"
+          className="shrink-0 rounded-lg bg-slate-800 px-3 py-1.5 text-sm font-medium text-slate-200"
+        >
+          ↻ Menge {kaufModus === 'max' ? 'Max' : `×${kaufModus}`}
+        </button>
+        {autoKaufFrei && (
           <button
-            key={String(m)}
-            onClick={() => setKaufModus(m)}
+            onClick={autoKaufUmschalten}
             className={`flex-1 rounded-lg py-1.5 text-sm font-medium ${
-              kaufModus === m ? 'bg-emerald-600 text-white' : 'bg-slate-800 text-slate-400'
+              autoKauf ? 'bg-amber-600 text-white' : 'bg-slate-800 text-slate-400'
             }`}
           >
-            {m === 'max' ? 'Max' : `×${m}`}
+            🤖 Auto-Käufer {autoKauf ? 'an' : 'aus'}
           </button>
-        ))}
+        )}
       </div>
-
-      {autoKaufFrei && (
-        <button
-          onClick={autoKaufUmschalten}
-          className={`mb-2 flex w-full items-center justify-center gap-2 rounded-lg py-1.5 text-sm font-medium ${
-            autoKauf ? 'bg-amber-600 text-white' : 'bg-slate-800 text-slate-400'
-          }`}
-        >
-          🤖 Auto-Käufer {autoKauf ? 'an' : 'aus'}
-        </button>
-      )}
 
       {BUSINESSES.filter((b) => b.welt === aktiveWelt).map((b) => (
         <BusinessCard key={b.id} id={b.id} />

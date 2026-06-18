@@ -25,6 +25,8 @@ interface GameStore {
   talentKaufen: (id: string) => void
   setKaufModus: (m: KaufModus) => void
   autoKaufUmschalten: () => void
+  erfolgAbholen: (id: string) => void
+  alleErfolgeAbholen: () => void
   setAktiveWelt: (id: string) => void
   weltFreischalten: (id: string) => void
   spielstandZuruecksetzen: () => void
@@ -98,6 +100,22 @@ export const useGame = create<GameStore>((set, get) => ({
     }),
 
   setKaufModus: (m) => set({ kaufModus: m }),
+
+  erfolgAbholen: (id) =>
+    set((s) => {
+      const abgeholt = s.state.erfolgeAbgeholt ?? []
+      // Nur abholen, wenn erreicht und noch nicht abgeholt.
+      if (!s.state.erfolge.includes(id) || abgeholt.includes(id)) return {}
+      s.state.erfolgeAbgeholt = [...abgeholt, id]
+      return { state: { ...s.state } }
+    }),
+
+  alleErfolgeAbholen: () =>
+    set((s) => {
+      // Alle erreichten Erfolge auf einmal abholen (Belohnungen aktivieren).
+      s.state.erfolgeAbgeholt = [...s.state.erfolge]
+      return { state: { ...s.state } }
+    }),
 
   autoKaufUmschalten: () =>
     set((s) => {

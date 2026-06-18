@@ -20,6 +20,7 @@ export function neuerSpielstand(): GameState {
     prestigeCount: 0,
     autoKauf: false,
     erfolge: [],
+    erfolgeAbgeholt: [],
     freigeschalteteWelten: ['welt1'],
     zuletztGesehen: Date.now(),
   }
