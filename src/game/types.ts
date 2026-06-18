@@ -1,8 +1,21 @@
 // Die Datentypen des Spiels. Hier ist festgelegt, welche Form unsere Daten haben.
 
+/** Feste Eigenschaften einer Welt (Gruppe von Businesses, die man freischalten kann). */
+export interface WeltConfig {
+  id: string
+  name: string
+  emoji: string
+  /** Einmalige Geld-Kosten zum Freischalten (0 = von Anfang an frei, wie Welt 1). */
+  freischaltKosten: number
+  /** Dauerhafter globaler Einkommens-Bonus, sobald freigeschaltet (0,5 = +50 %). */
+  bonus: number
+}
+
 /** Feste Eigenschaften eines Business (kommen aus der config.ts, ändern sich nie). */
 export interface BusinessConfig {
   id: string
+  /** Zu welcher Welt das Business gehört (siehe WELTEN in config.ts). */
+  welt: string
   name: string
   emoji: string
   /** Kosten für das allererste Stück. */
@@ -63,6 +76,8 @@ export interface GameState {
   autoKauf: boolean
   /** Ids der bereits erreichten Erfolge (dauerhaft, geben Einkommens-Bonus). */
   erfolge: string[]
+  /** Ids der freigeschalteten Welten (mindestens 'welt1'; weitere kosten Geld). */
+  freigeschalteteWelten: string[]
   /** Zeitstempel des letzten Speicherns — für die Offline-Berechnung. */
   zuletztGesehen: number
 }

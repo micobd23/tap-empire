@@ -31,6 +31,7 @@ export function Header() {
               <span>Talente ×{auf.talente.toFixed(2)}</span>
               <span>Meisterschaft ×{auf.meisterschaft.toFixed(2)}</span>
               <span>Erfolge ×{auf.erfolge.toFixed(2)}</span>
+              {auf.welten > 1 && <span>Welten ×{auf.welten.toFixed(2)}</span>}
             </div>
           )}
         </div>

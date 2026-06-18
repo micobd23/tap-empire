@@ -1,6 +1,6 @@
 // ALLE Spieldaten und Balance-Werte an einem Ort.
 // Wenn das Spiel sich zu schnell oder zu langsam anfühlt, ändert man NUR hier die Zahlen.
-import type { BusinessConfig, TalentConfig } from './types'
+import type { BusinessConfig, TalentConfig, WeltConfig } from './types'
 
 /** Geld, mit dem man ins Spiel startet (reicht für die ersten Limonadenstände). */
 export const START_GELD = 10
@@ -22,16 +22,43 @@ export const OFFLINE_MAX_MS = 8 * 60 * 60 * 1000
  *  durchlaufend — angenehmer fürs Auge, sobald Zyklen im Sekundentakt oder schneller laufen. */
 export const BALKEN_VOLL_AB_MS = 1000
 
-/** Die Liste aller Businesses, aufsteigend vom günstigsten zum teuersten. */
+/**
+ * Die Welten. Welt 1 ist von Anfang an frei; weitere Welten schaltet man mit Geld frei
+ * (wie bei Taps to Riches — ansparen, kein bestimmtes Business-Level nötig) und bekommt
+ * dafür einen dauerhaften globalen Einkommens-Bonus. So gibt es nie ein Plateau.
+ * Freischalt-Preise und Boni hier zentral tunen.
+ */
+export const WELTEN: WeltConfig[] = [
+  { id: 'welt1', name: 'Klassik', emoji: '🌍', freischaltKosten: 0,               bonus: 0 },
+  { id: 'welt2', name: 'Zukunft', emoji: '🚀', freischaltKosten: 100_000_000_000, bonus: 0.5 },
+]
+
+/** Schneller Zugriff auf eine Welt über die id. */
+export const WELT_MAP: Record<string, WeltConfig> = Object.fromEntries(
+  WELTEN.map((w) => [w.id, w]),
+)
+
+/** Die Liste aller Businesses, aufsteigend vom günstigsten zum teuersten (Welt für Welt). */
 export const BUSINESSES: BusinessConfig[] = [
-  { id: 'limonade',   name: 'Limonadenstand', emoji: '🍋', basisKosten: 4,         kostenFaktor: 1.07, dauerMs: 1000,   basisErtrag: 1,        managerKosten: 1_000 },
-  { id: 'zeitung',    name: 'Zeitungskiosk',  emoji: '📰', basisKosten: 60,        kostenFaktor: 1.15, dauerMs: 3000,   basisErtrag: 60,       managerKosten: 15_000 },
-  { id: 'waesche',    name: 'Autowäsche',     emoji: '🚗', basisKosten: 720,       kostenFaktor: 1.14, dauerMs: 6000,   basisErtrag: 540,      managerKosten: 100_000 },
-  { id: 'pizza',      name: 'Pizzeria',       emoji: '🍕', basisKosten: 8_640,     kostenFaktor: 1.13, dauerMs: 12000,  basisErtrag: 4_320,    managerKosten: 500_000 },
-  { id: 'donut',      name: 'Donut-Café',     emoji: '🍩', basisKosten: 103_680,   kostenFaktor: 1.12, dauerMs: 24000,  basisErtrag: 51_840,   managerKosten: 1_200_000 },
-  { id: 'fitness',    name: 'Fitnessstudio',  emoji: '💪', basisKosten: 1_244_160, kostenFaktor: 1.11, dauerMs: 48000,  basisErtrag: 622_080,  managerKosten: 10_000_000 },
-  { id: 'bank',       name: 'Bank',           emoji: '🏦', basisKosten: 14_929_920,kostenFaktor: 1.10, dauerMs: 96000,  basisErtrag: 7_464_960,managerKosten: 100_000_000 },
-  { id: 'immobilien', name: 'Immobilien',     emoji: '🏢', basisKosten: 179_159_040,kostenFaktor: 1.10,dauerMs: 192000, basisErtrag: 89_579_520,managerKosten: 1_000_000_000 },
+  // --- Welt 1: Klassik ---
+  { id: 'limonade',   welt: 'welt1', name: 'Limonadenstand', emoji: '🍋', basisKosten: 4,         kostenFaktor: 1.07, dauerMs: 1000,   basisErtrag: 1,        managerKosten: 1_000 },
+  { id: 'zeitung',    welt: 'welt1', name: 'Zeitungskiosk',  emoji: '📰', basisKosten: 60,        kostenFaktor: 1.15, dauerMs: 3000,   basisErtrag: 60,       managerKosten: 15_000 },
+  { id: 'waesche',    welt: 'welt1', name: 'Autowäsche',     emoji: '🚗', basisKosten: 720,       kostenFaktor: 1.14, dauerMs: 6000,   basisErtrag: 540,      managerKosten: 100_000 },
+  { id: 'pizza',      welt: 'welt1', name: 'Pizzeria',       emoji: '🍕', basisKosten: 8_640,     kostenFaktor: 1.13, dauerMs: 12000,  basisErtrag: 4_320,    managerKosten: 500_000 },
+  { id: 'donut',      welt: 'welt1', name: 'Donut-Café',     emoji: '🍩', basisKosten: 103_680,   kostenFaktor: 1.12, dauerMs: 24000,  basisErtrag: 51_840,   managerKosten: 1_200_000 },
+  { id: 'fitness',    welt: 'welt1', name: 'Fitnessstudio',  emoji: '💪', basisKosten: 1_244_160, kostenFaktor: 1.11, dauerMs: 48000,  basisErtrag: 622_080,  managerKosten: 10_000_000 },
+  { id: 'bank',       welt: 'welt1', name: 'Bank',           emoji: '🏦', basisKosten: 14_929_920,kostenFaktor: 1.10, dauerMs: 96000,  basisErtrag: 7_464_960,managerKosten: 100_000_000 },
+  { id: 'immobilien', welt: 'welt1', name: 'Immobilien',     emoji: '🏢', basisKosten: 179_159_040,kostenFaktor: 1.10,dauerMs: 192000, basisErtrag: 89_579_520,managerKosten: 1_000_000_000 },
+
+  // --- Welt 2: Zukunft & Weltraum (Erträge & Kosten setzen die Kurve von Welt 1 fort) ---
+  { id: 'startup',   welt: 'welt2', name: 'Tech-Startup',      emoji: '💻', basisKosten: 2_150_000_000,        kostenFaktor: 1.10, dauerMs: 2000,   basisErtrag: 1_075_000_000,        managerKosten: 12_000_000_000 },
+  { id: 'eauto',     welt: 'welt2', name: 'E-Auto-Werk',       emoji: '🔋', basisKosten: 25_800_000_000,       kostenFaktor: 1.10, dauerMs: 4000,   basisErtrag: 12_900_000_000,       managerKosten: 150_000_000_000 },
+  { id: 'roboter',   welt: 'welt2', name: 'Roboterfabrik',     emoji: '🤖', basisKosten: 309_600_000_000,      kostenFaktor: 1.10, dauerMs: 8000,   basisErtrag: 154_800_000_000,      managerKosten: 1_800_000_000_000 },
+  { id: 'ki',        welt: 'welt2', name: 'KI-Rechenzentrum',  emoji: '🧠', basisKosten: 3_715_000_000_000,    kostenFaktor: 1.10, dauerMs: 16000,  basisErtrag: 1_857_000_000_000,    managerKosten: 21_600_000_000_000 },
+  { id: 'raumfahrt', welt: 'welt2', name: 'Raumfahrt-Firma',   emoji: '🚀', basisKosten: 44_580_000_000_000,   kostenFaktor: 1.10, dauerMs: 32000,  basisErtrag: 22_290_000_000_000,   managerKosten: 260_000_000_000_000 },
+  { id: 'mond',      welt: 'welt2', name: 'Mond-Mine',         emoji: '🌙', basisKosten: 535_000_000_000_000,  kostenFaktor: 1.10, dauerMs: 64000,  basisErtrag: 267_500_000_000_000,  managerKosten: 3_100_000_000_000_000 },
+  { id: 'mars',      welt: 'welt2', name: 'Mars-Kolonie',      emoji: '🔴', basisKosten: 6_420_000_000_000_000,kostenFaktor: 1.10, dauerMs: 128000, basisErtrag: 3_210_000_000_000_000,managerKosten: 37_000_000_000_000_000 },
+  { id: 'orbital',   welt: 'welt2', name: 'Orbital-Stadt',     emoji: '🛰️', basisKosten: 77_000_000_000_000_000,kostenFaktor: 1.10,dauerMs: 192000, basisErtrag: 38_500_000_000_000_000,managerKosten: 444_000_000_000_000_000 },
 ]
 
 /** Schneller Zugriff auf eine Business-Konfiguration über die id. */

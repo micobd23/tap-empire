@@ -10,7 +10,7 @@ import {
   START_GELD,
 } from './config'
 import { talentEffekte } from './talents'
-import { gesamtEinkommenProSekunde, meisterschaftsFaktor } from './economy'
+import { gesamtEinkommenProSekunde, meisterschaftsFaktor, weltBonusFaktor } from './economy'
 import { erfolgsFaktor } from './erfolge'
 
 /** Wie viele Investoren der gesamte Lebensverdienst wert ist (Wurzel = abnehmender Ertrag). */
@@ -30,6 +30,7 @@ export function multiplikatorAufschluesselung(state: GameState): {
   talente: number
   meisterschaft: number
   erfolge: number
+  welten: number
   gesamt: number
 } {
   const eff = talentEffekte(state.talents)
@@ -37,7 +38,15 @@ export function multiplikatorAufschluesselung(state: GameState): {
   const talente = eff.einkommensMultiplikator
   const meisterschaft = meisterschaftsFaktor(state)
   const erfolge = erfolgsFaktor(state)
-  return { investoren, talente, meisterschaft, erfolge, gesamt: investoren * talente * meisterschaft * erfolge }
+  const welten = weltBonusFaktor(state)
+  return {
+    investoren,
+    talente,
+    meisterschaft,
+    erfolge,
+    welten,
+    gesamt: investoren * talente * meisterschaft * erfolge * welten,
+  }
 }
 
 /** Der gesamte Einkommens-Multiplikator aus Investoren, Talenten UND Meisterschaft. */

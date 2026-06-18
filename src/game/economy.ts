@@ -7,6 +7,7 @@ import {
   TEMPO_MEILENSTEIN_BOOST,
   TEMPO_MEILENSTEIN_INTERVALL,
   TEMPO_MEILENSTEIN_MAX,
+  WELT_MAP,
 } from './config'
 
 /**
@@ -161,9 +162,23 @@ export function aktuellerRang(gesamtVerdient: number): { titel: string; naechste
 export function bestesLeistbares(state: GameState): BusinessConfig | null {
   for (let i = BUSINESSES.length - 1; i >= 0; i--) {
     const b = BUSINESSES[i]
+    if (!state.freigeschalteteWelten.includes(b.welt)) continue // gesperrte Welten überspringen
     const rt = state.businesses[b.id]
     const preis = kostenFuer(b, rt ? rt.anzahl : 0, 1)
     if (preis <= state.geld) return b
   }
   return null
+}
+
+/**
+ * Dauerhafter globaler Einkommens-Bonus aus allen freigeschalteten Welten (1 = kein Bonus).
+ * Jede freigeschaltete Welt addiert ihren `bonus` (Welt 1 = 0).
+ */
+export function weltBonusFaktor(state: GameState): number {
+  let bonus = 0
+  for (const id of state.freigeschalteteWelten) {
+    const w = WELT_MAP[id]
+    if (w) bonus += w.bonus
+  }
+  return 1 + bonus
 }

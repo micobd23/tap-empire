@@ -3,7 +3,7 @@ import { create } from 'zustand'
 import type { GameState } from './game/types'
 import { laden, neuerSpielstand, speichern } from './game/save'
 import { applyOffline, tick } from './game/engine'
-import { BUSINESS_MAP } from './game/config'
+import { BUSINESS_MAP, WELT_MAP } from './game/config'
 import { kostenFuer } from './game/economy'
 import { kannPrestige, prestigeDurchfuehren } from './game/prestige'
 import { talentEffekte, talentKaufbar } from './game/talents'
@@ -15,6 +15,8 @@ interface GameStore {
   state: GameState
   offlineVerdienst: number
   kaufModus: KaufModus
+  /** Welche Welt im Business-Tab gerade angezeigt wird (reine Anzeige, nicht gespeichert). */
+  aktiveWelt: string
   tickStore: (deltaMs: number) => void
   kaufen: (id: string, menge: number) => void
   managerKaufen: (id: string) => void
@@ -23,6 +25,8 @@ interface GameStore {
   talentKaufen: (id: string) => void
   setKaufModus: (m: KaufModus) => void
   autoKaufUmschalten: () => void
+  setAktiveWelt: (id: string) => void
+  weltFreischalten: (id: string) => void
   spielstandZuruecksetzen: () => void
   speichernJetzt: () => void
   offlineQuittieren: () => void
@@ -38,6 +42,7 @@ function start(): { state: GameState; offlineVerdienst: number } {
 export const useGame = create<GameStore>((set, get) => ({
   ...start(),
   kaufModus: 1,
+  aktiveWelt: 'welt1',
 
   tickStore: (deltaMs) =>
     set((s) => {
@@ -50,6 +55,7 @@ export const useGame = create<GameStore>((set, get) => ({
       const b = BUSINESS_MAP[id]
       const rt = s.state.businesses[id]
       if (menge < 1) return {}
+      if (!s.state.freigeschalteteWelten.includes(b.welt)) return {} // gesperrte Welt
       const kosten = kostenFuer(b, rt.anzahl, menge)
       if (s.state.geld < kosten) return {}
       rt.anzahl += menge
@@ -99,10 +105,24 @@ export const useGame = create<GameStore>((set, get) => ({
       return { state: { ...s.state } }
     }),
 
+  setAktiveWelt: (id) => set({ aktiveWelt: id }),
+
+  weltFreischalten: (id) =>
+    set((s) => {
+      const welt = WELT_MAP[id]
+      if (!welt) return {}
+      if (s.state.freigeschalteteWelten.includes(id)) return {} // schon frei
+      if (s.state.geld < welt.freischaltKosten) return {} // noch nicht genug Geld
+      s.state.geld -= welt.freischaltKosten
+      s.state.freigeschalteteWelten = [...s.state.freigeschalteteWelten, id]
+      // Direkt in die neue Welt wechseln, damit man gleich loslegen kann.
+      return { state: { ...s.state }, aktiveWelt: id }
+    }),
+
   spielstandZuruecksetzen: () => {
     const frisch = neuerSpielstand()
     speichern(frisch)
-    set({ state: frisch, offlineVerdienst: 0, kaufModus: 1 })
+    set({ state: frisch, offlineVerdienst: 0, kaufModus: 1, aktiveWelt: 'welt1' })
   },
 
   speichernJetzt: () => speichern(get().state),
