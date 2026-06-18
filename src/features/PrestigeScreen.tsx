@@ -13,6 +13,7 @@ import {
 import { verfuegbareTalentpunkte } from '../game/talents'
 import { formatGeld } from '../game/format'
 import { TalentBaum } from './TalentBaum'
+import { SpielstandBackup } from './SpielstandBackup'
 
 export function PrestigeScreen() {
   const investoren = useGame((s) => s.state.investoren)
@@ -105,6 +106,8 @@ export function PrestigeScreen() {
       </div>
 
       <TalentBaum />
+
+      <SpielstandBackup />
 
       <div className="mt-6 border-t border-slate-800 pt-4 text-center">
         {!resetBestaetige ? (

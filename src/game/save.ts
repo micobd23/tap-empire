@@ -26,20 +26,27 @@ export function neuerSpielstand(): GameState {
   }
 }
 
+/**
+ * Führt geladene oder importierte Daten mit einem frischen Stand zusammen — so sind neue
+ * Businesses, Talente oder Felder aus späteren Updates immer vorhanden (sonst könnte man
+ * z. B. neu hinzugekommene Businesses nicht kaufen).
+ */
+function normalisieren(daten: Partial<GameState>): GameState {
+  const basis = neuerSpielstand()
+  return {
+    ...basis,
+    ...daten,
+    businesses: { ...basis.businesses, ...(daten.businesses ?? {}) },
+    talents: { ...basis.talents, ...(daten.talents ?? {}) },
+  }
+}
+
 /** Lädt den Spielstand oder gibt null zurück, wenn keiner existiert. */
 export function laden(): GameState | null {
   try {
     const text = localStorage.getItem(KEY)
     if (!text) return null
-    const daten = JSON.parse(text) as Partial<GameState>
-    // Mit einem frischen Stand zusammenführen, falls neue Businesses dazugekommen sind.
-    const basis = neuerSpielstand()
-    return {
-      ...basis,
-      ...daten,
-      businesses: { ...basis.businesses, ...(daten.businesses ?? {}) },
-      talents: { ...basis.talents, ...(daten.talents ?? {}) },
-    }
+    return normalisieren(JSON.parse(text) as Partial<GameState>)
   } catch {
     return null
   }
@@ -52,5 +59,42 @@ export function speichern(state: GameState): void {
     localStorage.setItem(KEY, JSON.stringify(zuSpeichern))
   } catch {
     // Speicher nicht verfügbar (z. B. privater Modus) — still ignorieren.
+  }
+}
+
+// --- Spielstand-Backup: als kopierbaren Code sichern und wieder einspielen ---
+// (Der Fortschritt liegt nur lokal auf dem Gerät — dieser Code ist die einzige Sicherung.)
+
+function textZuBase64(text: string): string {
+  const bytes = new TextEncoder().encode(text)
+  let binaer = ''
+  for (const b of bytes) binaer += String.fromCharCode(b)
+  return btoa(binaer)
+}
+
+function base64ZuText(b64: string): string {
+  const binaer = atob(b64)
+  const bytes = Uint8Array.from(binaer, (c) => c.charCodeAt(0))
+  return new TextDecoder().decode(bytes)
+}
+
+/** Erzeugt einen kopierbaren Sicherungs-Code aus dem aktuellen Spielstand. */
+export function exportieren(state: GameState): string {
+  return textZuBase64(JSON.stringify(state))
+}
+
+/**
+ * Liest einen Sicherungs-Code wieder ein. Gibt null zurück, wenn der Text kein gültiger
+ * Spielstand ist — so macht ein Vertipper oder falscher Text nichts kaputt.
+ */
+export function importieren(text: string): GameState | null {
+  try {
+    const daten = JSON.parse(base64ZuText(text.trim())) as Partial<GameState>
+    if (typeof daten.geld !== 'number' || typeof daten.businesses !== 'object' || !daten.businesses) {
+      return null // sieht nicht nach einem Spielstand aus
+    }
+    return { ...normalisieren(daten), zuletztGesehen: Date.now() }
+  } catch {
+    return null
   }
 }

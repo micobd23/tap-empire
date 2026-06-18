@@ -1,7 +1,7 @@
 // Der Store ist die Brücke zwischen Gehirn (Logik) und Hülle (Anzeige).
 import { create } from 'zustand'
 import type { GameState } from './game/types'
-import { laden, neuerSpielstand, speichern } from './game/save'
+import { exportieren, importieren, laden, neuerSpielstand, speichern } from './game/save'
 import { applyOffline, tick } from './game/engine'
 import { BUSINESS_MAP, WELT_MAP } from './game/config'
 import { kostenFuer } from './game/economy'
@@ -29,6 +29,8 @@ interface GameStore {
   alleErfolgeAbholen: () => void
   setAktiveWelt: (id: string) => void
   weltFreischalten: (id: string) => void
+  spielstandExportieren: () => string
+  spielstandImportieren: (text: string) => boolean
   spielstandZuruecksetzen: () => void
   speichernJetzt: () => void
   offlineQuittieren: () => void
@@ -56,7 +58,7 @@ export const useGame = create<GameStore>((set, get) => ({
     set((s) => {
       const b = BUSINESS_MAP[id]
       const rt = s.state.businesses[id]
-      if (menge < 1) return {}
+      if (!b || !rt || menge < 1) return {} // unbekanntes/fehlendes Business → nichts tun
       if (!s.state.freigeschalteteWelten.includes(b.welt)) return {} // gesperrte Welt
       const kosten = kostenFuer(b, rt.anzahl, menge)
       if (s.state.geld < kosten) return {}
@@ -136,6 +138,16 @@ export const useGame = create<GameStore>((set, get) => ({
       // Direkt in die neue Welt wechseln, damit man gleich loslegen kann.
       return { state: { ...s.state }, aktiveWelt: id }
     }),
+
+  spielstandExportieren: () => exportieren(get().state),
+
+  spielstandImportieren: (text) => {
+    const importiert = importieren(text)
+    if (!importiert) return false // ungültiger Code — Spielstand bleibt unangetastet
+    speichern(importiert)
+    set({ state: importiert, offlineVerdienst: 0, kaufModus: 1, aktiveWelt: 'welt1' })
+    return true
+  },
 
   spielstandZuruecksetzen: () => {
     const frisch = neuerSpielstand()
