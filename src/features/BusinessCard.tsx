@@ -1,5 +1,5 @@
 // Eine Business-Karte: antippen zum Produzieren (mit fliegender +X), kaufen, Manager anstellen.
-import { useState } from 'react'
+import { useEffect, useRef, useState, type PointerEvent } from 'react'
 import { useGame } from '../store'
 import { BALKEN_VOLL_AB_MS, BUSINESS_MAP } from '../game/config'
 import { ertragProZyklus, kostenFuer, maxKaufbar, naechsterMeilenstein, tempoMeilensteinFaktor } from '../game/economy'
@@ -46,6 +46,34 @@ export function BusinessCard({ id }: { id: string }) {
   const kosten = kostenFuer(b, anzahl, menge)
   const kannKaufen = kaufModus === 'max' ? maxMenge >= 1 : geld >= kosten
 
+  // Kaufen-Button gedrückt halten → wiederholt kaufen statt nur einmal.
+  // mengeRef hält immer die aktuelle Menge, damit auch der Max-Modus mitzählt.
+  const mengeRef = useRef(menge)
+  mengeRef.current = menge
+  const halteRef = useRef<number | null>(null)
+
+  function haltStop() {
+    if (halteRef.current !== null) {
+      clearInterval(halteRef.current)
+      halteRef.current = null
+    }
+    window.removeEventListener('pointerup', haltStop)
+    window.removeEventListener('pointercancel', haltStop)
+  }
+
+  function haltStart(e: PointerEvent<HTMLButtonElement>) {
+    if (e.button !== 0) return // nur linke Maustaste / Touch
+    kaufen(id, mengeRef.current) // sofort einmal kaufen
+    if (halteRef.current !== null) return
+    halteRef.current = window.setInterval(() => kaufen(id, mengeRef.current), 120)
+    // Global lauschen, falls der Button mitten im Halten deaktiviert wird (Geld leer).
+    window.addEventListener('pointerup', haltStop)
+    window.addEventListener('pointercancel', haltStop)
+  }
+
+  // Sicherheitsnetz: Intervall stoppen, falls die Karte verschwindet.
+  useEffect(() => () => { if (halteRef.current !== null) clearInterval(halteRef.current) }, [])
+
   function handleTap() {
     if (!aktiv || hatManager || laeuft) return
     antippen(id)
@@ -81,11 +109,6 @@ export function BusinessCard({ id }: { id: string }) {
             ×{anzahl}
           </span>
         )}
-        {tempoFaktor < 1 && (
-          <span className="absolute right-0.5 top-0.5 z-10 rounded bg-slate-950/70 px-1 text-[10px] font-semibold leading-tight text-amber-400">
-            ⚡{(1 / tempoFaktor).toFixed(2)}
-          </span>
-        )}
         <div
           className="absolute bottom-0 left-0 h-1.5 bg-emerald-500"
           style={{ width: `${prozent}%` }}
@@ -94,7 +117,12 @@ export function BusinessCard({ id }: { id: string }) {
 
       <div className="min-w-0 flex-1">
         <div className="truncate font-medium text-slate-100">{b.name}</div>
-        <div className="text-sm text-emerald-400">+{formatGeld(ertragProSekunde)} € / s</div>
+        <div className="text-sm text-emerald-400">
+          +{formatGeld(ertragProSekunde)} € / s
+          {tempoFaktor < 1 && (
+            <span className="ml-1.5 text-amber-400" title={`Tempo ×${(1 / tempoFaktor).toFixed(2)}`}>⚡</span>
+          )}
+        </div>
         {aktiv && naechsterMs !== null && (
           <div className="text-xs text-slate-500">noch {naechsterMs - anzahl} bis ×2-Bonus</div>
         )}
@@ -102,7 +130,7 @@ export function BusinessCard({ id }: { id: string }) {
           <button
             onClick={() => managerKaufen(id)}
             disabled={geld < managerKosten}
-            className="mt-1 rounded-md bg-slate-700 px-2 py-0.5 text-xs text-slate-200 disabled:opacity-40"
+            className="mt-1 whitespace-nowrap rounded-md bg-slate-700 px-2 py-0.5 text-xs text-slate-200 disabled:opacity-40"
           >
             Manager: {formatGeld(managerKosten)} €
           </button>
@@ -111,9 +139,12 @@ export function BusinessCard({ id }: { id: string }) {
       </div>
 
       <button
-        onClick={() => kaufen(id, menge)}
+        onPointerDown={haltStart}
+        onPointerUp={haltStop}
+        onPointerLeave={haltStop}
+        onContextMenu={(e) => e.preventDefault()}
         disabled={!kannKaufen}
-        className="w-28 shrink-0 rounded-lg bg-emerald-600 px-2 py-2 text-center font-medium text-white transition-transform active:scale-95 disabled:bg-slate-700 disabled:text-slate-500 disabled:active:scale-100"
+        className="w-28 shrink-0 touch-none select-none rounded-lg bg-emerald-600 px-2 py-2 text-center font-medium text-white transition-transform active:scale-95 disabled:bg-slate-700 disabled:text-slate-500 disabled:active:scale-100"
       >
         <div className="text-xs opacity-80">Kaufen ×{menge}</div>
         <div className="truncate text-sm">{formatGeld(kosten)} €</div>
