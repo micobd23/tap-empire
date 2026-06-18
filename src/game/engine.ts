@@ -2,7 +2,7 @@
 // `tick` verändert den übergebenen Zustand direkt (der Store kümmert sich ums Neu-Rendern).
 import type { GameState } from './types'
 import { AUTO_KAUFER_AB_PRESTIGE, BUSINESSES } from './config'
-import { ertragProZyklus, guenstigstesLeistbares, kostenFuer, tempoMeilensteinFaktor } from './economy'
+import { bestesLeistbares, ertragProZyklus, kostenFuer, tempoMeilensteinFaktor } from './economy'
 import { globalerEinkommensMultiplikator } from './prestige'
 import { talentEffekte } from './talents'
 import { erfolgePruefen } from './erfolge'
@@ -37,9 +37,10 @@ export function tick(state: GameState, deltaMs: number): void {
     }
   }
 
-  // Auto-Käufer (ab freigeschaltetem Prestige-Level): kauft pro Tick das günstigste leistbare Stück.
+  // Auto-Käufer (ab freigeschaltetem Prestige-Level): kauft pro Tick das höchstwertige leistbare
+  // Stück → schaltet neue Sorten frei und pumpt nicht endlos die billigste hoch.
   if (state.autoKauf && state.prestigeCount >= AUTO_KAUFER_AB_PRESTIGE) {
-    const b = guenstigstesLeistbares(state)
+    const b = bestesLeistbares(state)
     if (b) {
       const rt = state.businesses[b.id]
       state.geld -= kostenFuer(b, rt.anzahl, 1)

@@ -152,17 +152,18 @@ export function aktuellerRang(gesamtVerdient: number): { titel: string; naechste
   return { titel, naechsterAb }
 }
 
-/** Günstigstes Business, dessen nächstes Stück gerade leistbar ist (für den Auto-Käufer). */
-export function guenstigstesLeistbares(state: GameState): BusinessConfig | null {
-  let bestes: BusinessConfig | null = null
-  let besterPreis = Infinity
-  for (const b of BUSINESSES) {
+/**
+ * Höchstwertiges Business, dessen nächstes Stück gerade leistbar ist (für den Auto-Käufer).
+ * Geht von der teuersten Sorte abwärts → der Auto-Käufer schaltet so neue Sorten frei, statt
+ * endlos die billigste hochzupumpen (sonst bliebe nie Geld für höhere Stufen oder neue
+ * Businesses übrig, und man käme nie aus dem Limonaden-Stadium heraus).
+ */
+export function bestesLeistbares(state: GameState): BusinessConfig | null {
+  for (let i = BUSINESSES.length - 1; i >= 0; i--) {
+    const b = BUSINESSES[i]
     const rt = state.businesses[b.id]
     const preis = kostenFuer(b, rt ? rt.anzahl : 0, 1)
-    if (preis <= state.geld && preis < besterPreis) {
-      besterPreis = preis
-      bestes = b
-    }
+    if (preis <= state.geld) return b
   }
-  return bestes
+  return null
 }

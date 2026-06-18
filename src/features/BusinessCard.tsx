@@ -2,7 +2,7 @@
 import { useEffect, useRef, useState, type PointerEvent } from 'react'
 import { useGame } from '../store'
 import { BALKEN_VOLL_AB_MS, BUSINESS_MAP } from '../game/config'
-import { ertragProZyklus, kostenFuer, maxKaufbar, naechsterMeilenstein, tempoMeilensteinFaktor } from '../game/economy'
+import { ertragProZyklus, kostenFuer, maxKaufbar, tempoMeilensteinFaktor } from '../game/economy'
 import { globalerEinkommensMultiplikator } from '../game/prestige'
 import { talentEffekte } from '../game/talents'
 import { formatGeld } from '../game/format'
@@ -26,7 +26,6 @@ export function BusinessCard({ id }: { id: string }) {
 
   const aktiv = anzahl > 0
   const tempoFaktor = tempoMeilensteinFaktor(anzahl)
-  const naechsterMs = naechsterMeilenstein(anzahl)
   const dauer = b.dauerMs * zyklusFaktor * tempoFaktor
   const laeuftGerade = aktiv && (hatManager || laeuft)
   // Nur im Automatik-Betrieb (Manager) den Balken bei Sekundentakt einfach voll lassen,
@@ -117,15 +116,12 @@ export function BusinessCard({ id }: { id: string }) {
 
       <div className="min-w-0 flex-1">
         <div className="truncate font-medium text-slate-100">{b.name}</div>
-        <div className="text-sm text-emerald-400">
+        <div className="flex items-center whitespace-nowrap text-sm text-emerald-400">
           +{formatGeld(ertragProSekunde)} € / s
           {tempoFaktor < 1 && (
             <span className="ml-1.5 text-amber-400" title={`Tempo ×${(1 / tempoFaktor).toFixed(2)}`}>⚡</span>
           )}
         </div>
-        {aktiv && naechsterMs !== null && (
-          <div className="text-xs text-slate-500">noch {naechsterMs - anzahl} bis ×2-Bonus</div>
-        )}
         {aktiv && !hatManager && (
           <button
             onClick={() => managerKaufen(id)}
