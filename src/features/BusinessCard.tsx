@@ -1,5 +1,5 @@
 // Eine Business-Karte: antippen zum Produzieren (mit fliegender +X), kaufen, Manager anstellen.
-import { useEffect, useRef, useState, type PointerEvent } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useGame } from '../store'
 import { BALKEN_VOLL_AB_MS, BUSINESS_MAP } from '../game/config'
 import { ertragProZyklus, kostenFuer, maxKaufbar, tempoMeilensteinFaktor } from '../game/economy'
@@ -45,33 +45,40 @@ export function BusinessCard({ id }: { id: string }) {
   const kosten = kostenFuer(b, anzahl, menge)
   const kannKaufen = kaufModus === 'max' ? maxMenge >= 1 : geld >= kosten
 
-  // Kaufen-Button gedrückt halten → wiederholt kaufen statt nur einmal.
-  // mengeRef hält immer die aktuelle Menge, damit auch der Max-Modus mitzählt.
+  // Der einzelne Kauf läuft über onClick — auf dem iPhone das zuverlässigste Touch-Ereignis
+  // (onPointerDown wurde dort oft verschluckt). Hält man den Knopf, kommen nach kurzer Zeit
+  // automatisch Wiederholungen dazu. mengeRef hält immer die aktuelle Menge (Max-Modus zählt mit).
   const mengeRef = useRef(menge)
   mengeRef.current = menge
-  const halteRef = useRef<number | null>(null)
+  const startRef = useRef<number | null>(null)
+  const wiederholRef = useRef<number | null>(null)
 
   function haltStop() {
-    if (halteRef.current !== null) {
-      clearInterval(halteRef.current)
-      halteRef.current = null
+    if (startRef.current !== null) {
+      clearTimeout(startRef.current)
+      startRef.current = null
+    }
+    if (wiederholRef.current !== null) {
+      clearInterval(wiederholRef.current)
+      wiederholRef.current = null
     }
     window.removeEventListener('pointerup', haltStop)
     window.removeEventListener('pointercancel', haltStop)
   }
 
-  function haltStart(e: PointerEvent<HTMLButtonElement>) {
-    if (e.button !== 0) return // nur linke Maustaste / Touch
-    kaufen(id, mengeRef.current) // sofort einmal kaufen
-    if (halteRef.current !== null) return
-    halteRef.current = window.setInterval(() => kaufen(id, mengeRef.current), 120)
-    // Global lauschen, falls der Button mitten im Halten deaktiviert wird (Geld leer).
+  function haltStart() {
+    if (startRef.current !== null || wiederholRef.current !== null) return
+    // Nach 350 ms Halten automatisch wiederholen — der erste Kauf kommt vom onClick.
+    startRef.current = window.setTimeout(() => {
+      wiederholRef.current = window.setInterval(() => kaufen(id, mengeRef.current), 120)
+    }, 350)
+    // Global lauschen, falls der Knopf mitten im Halten deaktiviert wird (Geld leer).
     window.addEventListener('pointerup', haltStop)
     window.addEventListener('pointercancel', haltStop)
   }
 
-  // Sicherheitsnetz: Intervall stoppen, falls die Karte verschwindet.
-  useEffect(() => () => { if (halteRef.current !== null) clearInterval(halteRef.current) }, [])
+  // Sicherheitsnetz: Timer stoppen, falls die Karte verschwindet.
+  useEffect(() => haltStop, [])
 
   function handleTap() {
     if (!aktiv || hatManager || laeuft) return
@@ -82,11 +89,7 @@ export function BusinessCard({ id }: { id: string }) {
   }
 
   return (
-    <div
-      className={`relative mb-2 flex items-center gap-3 rounded-xl border border-slate-700 bg-slate-800 p-3 ${
-        aktiv ? '' : 'opacity-60'
-      }`}
-    >
+    <div className="relative mb-2 flex items-center gap-3 rounded-xl border border-slate-700 bg-slate-800 p-3">
       {floats.map((f) => (
         <span
           key={f.key}
@@ -100,7 +103,7 @@ export function BusinessCard({ id }: { id: string }) {
         onClick={handleTap}
         disabled={!aktiv || hatManager}
         aria-label={`${b.name} produzieren`}
-        className="relative flex h-16 w-16 shrink-0 items-center justify-center overflow-hidden rounded-lg bg-slate-900 text-3xl transition-transform active:scale-95 disabled:active:scale-100"
+        className={`relative flex h-16 w-16 shrink-0 items-center justify-center overflow-hidden rounded-lg bg-slate-900 text-3xl transition-transform active:scale-95 disabled:active:scale-100 ${aktiv ? '' : 'opacity-60'}`}
       >
         <span className="relative z-10">{b.emoji}</span>
         {aktiv && (
@@ -114,7 +117,7 @@ export function BusinessCard({ id }: { id: string }) {
         />
       </button>
 
-      <div className="min-w-0 flex-1">
+      <div className={`min-w-0 flex-1 ${aktiv ? '' : 'opacity-60'}`}>
         <div className="truncate font-medium text-slate-100">{b.name}</div>
         <div className="whitespace-nowrap text-sm text-emerald-400">
           +{formatGeld(ertragProSekunde)} € / s
@@ -132,9 +135,11 @@ export function BusinessCard({ id }: { id: string }) {
       </div>
 
       <button
+        onClick={() => kaufen(id, mengeRef.current)}
         onPointerDown={haltStart}
         onPointerUp={haltStop}
         onPointerLeave={haltStop}
+        onPointerCancel={haltStop}
         onContextMenu={(e) => e.preventDefault()}
         disabled={!kannKaufen}
         className="w-28 shrink-0 touch-none select-none rounded-lg bg-emerald-600 px-2 py-2 text-center font-medium text-white transition-transform active:scale-95 disabled:bg-slate-700 disabled:text-slate-500 disabled:active:scale-100"
