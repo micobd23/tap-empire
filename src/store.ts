@@ -89,7 +89,7 @@ export const useGame = create<GameStore>((set, get) => ({
   prestige: () =>
     set((s) => {
       if (!kannPrestige(s.state)) return {}
-      return { state: prestigeDurchfuehren(s.state), offlineVerdienst: 0 }
+      return { state: prestigeDurchfuehren(s.state), offlineVerdienst: 0, aktiveWelt: 'welt1' }
     }),
 
   talentKaufen: (id) =>
@@ -132,8 +132,10 @@ export const useGame = create<GameStore>((set, get) => ({
       const welt = WELT_MAP[id]
       if (!welt) return {}
       if (s.state.freigeschalteteWelten.includes(id)) return {} // schon frei
-      if (s.state.geld < welt.freischaltKosten) return {} // noch nicht genug Geld
-      s.state.geld -= welt.freischaltKosten
+      const eff = talentEffekte(s.state.talents)
+      const effektiveKosten = Math.round(welt.freischaltKosten * (1 - eff.weltRabatt))
+      if (s.state.geld < effektiveKosten) return {} // noch nicht genug Geld
+      s.state.geld -= effektiveKosten
       s.state.freigeschalteteWelten = [...s.state.freigeschalteteWelten, id]
       // Direkt in die neue Welt wechseln, damit man gleich loslegen kann.
       return { state: { ...s.state }, aktiveWelt: id }

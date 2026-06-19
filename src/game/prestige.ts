@@ -125,6 +125,8 @@ export function prestigeDurchfuehren(state: GameState): GameState {
     investoren: neueInvestoren,
     talentpunkteVerdient: tpVerdient,
     prestigeCount: neuerCount,
+    // Welten müssen nach jedem Prestige neu freigeschaltet werden.
+    freigeschalteteWelten: ['welt1'],
     // gesamtVerdient bleibt erhalten (Basis für die Investoren über alle Runs)
     zuletztGesehen: Date.now(),
   }

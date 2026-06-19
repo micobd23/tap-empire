@@ -18,6 +18,8 @@ export interface TalentEffekte {
   offlineDeckelMs: number
   /** Faktor auf das Offline-Einkommen. */
   offlineMultiplikator: number
+  /** Rabatt auf Welt-Freischaltkosten (0,3 = 30 % günstiger). */
+  weltRabatt: number
 }
 
 const STD_OFFLINE_DECKEL = 8 * 60 * 60 * 1000
@@ -104,8 +106,9 @@ export function talentEffekte(talents: Record<string, number>): TalentEffekte {
             ? 0.85
             : 1
 
-  // Kapital: Startkapital (höchste Stufe gilt), Investoren-Verstärkung (addiert sich).
-  const startkapital = hat('k5') ? 1_000_000 : hat('k1') ? 10_000 : 0
+  // Kapital: Startkapital (k5 gilt), Investoren-Verstärkung (addiert sich), Welt-Rabatt (k1).
+  const startkapital = hat('k5') ? 1_000_000 : 0
+  const weltRabatt = hat('k1') ? 0.3 : 0
   let investorVerstaerkung = 1
   if (hat('k3')) investorVerstaerkung += 0.5
   if (hat('k4')) investorVerstaerkung += 1
@@ -129,5 +132,6 @@ export function talentEffekte(talents: Record<string, number>): TalentEffekte {
     investorVerstaerkung,
     offlineDeckelMs,
     offlineMultiplikator,
+    weltRabatt,
   }
 }

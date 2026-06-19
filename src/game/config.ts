@@ -30,8 +30,8 @@ export const BALKEN_VOLL_AB_MS = 1000
  */
 export const WELTEN: WeltConfig[] = [
   { id: 'welt1', name: 'Klassik',  emoji: '🌍', freischaltKosten: 0,                        bonus: 0    },
-  { id: 'welt2', name: 'Zukunft',  emoji: '🚀', freischaltKosten: 100_000_000_000,           bonus: 0.5  },
-  { id: 'welt3', name: 'Imperium', emoji: '🌐', freischaltKosten: 50_000_000_000_000_000_000, bonus: 0.75 },
+  { id: 'welt2', name: 'Zukunft',  emoji: '🚀', freischaltKosten: 800_000_000_000,             bonus: 0.5  },
+  { id: 'welt3', name: 'Imperium', emoji: '🌐', freischaltKosten: 250_000_000_000_000_000_000, bonus: 0.75 },
 ]
 
 /** Schneller Zugriff auf eine Welt über die id. */
@@ -51,25 +51,25 @@ export const BUSINESSES: BusinessConfig[] = [
   { id: 'bank',       welt: 'welt1', name: 'Bank',           emoji: '🏦', basisKosten: 14_929_920,kostenFaktor: 1.10, dauerMs: 96000,  basisErtrag: 7_464_960,managerKosten: 100_000_000 },
   { id: 'immobilien', welt: 'welt1', name: 'Immobilien',     emoji: '🏢', basisKosten: 179_159_040,kostenFaktor: 1.10,dauerMs: 192000, basisErtrag: 89_579_520,managerKosten: 1_000_000_000 },
 
-  // --- Welt 2: Zukunft & Weltraum (Erträge & Kosten setzen die Kurve von Welt 1 fort) ---
-  { id: 'startup',   welt: 'welt2', name: 'Tech-Startup',      emoji: '💻', basisKosten: 2_150_000_000,        kostenFaktor: 1.10, dauerMs: 2000,   basisErtrag: 1_075_000_000,        managerKosten: 12_000_000_000 },
-  { id: 'eauto',     welt: 'welt2', name: 'E-Auto-Werk',       emoji: '🔋', basisKosten: 25_800_000_000,       kostenFaktor: 1.10, dauerMs: 4000,   basisErtrag: 12_900_000_000,       managerKosten: 150_000_000_000 },
-  { id: 'roboter',   welt: 'welt2', name: 'Roboterfabrik',     emoji: '🤖', basisKosten: 309_600_000_000,      kostenFaktor: 1.10, dauerMs: 8000,   basisErtrag: 154_800_000_000,      managerKosten: 1_800_000_000_000 },
-  { id: 'ki',        welt: 'welt2', name: 'KI-Rechenzentrum',  emoji: '🧠', basisKosten: 3_715_000_000_000,    kostenFaktor: 1.10, dauerMs: 16000,  basisErtrag: 1_857_000_000_000,    managerKosten: 21_600_000_000_000 },
-  { id: 'raumfahrt', welt: 'welt2', name: 'Raumfahrt-Firma',   emoji: '🚀', basisKosten: 44_580_000_000_000,   kostenFaktor: 1.10, dauerMs: 32000,  basisErtrag: 22_290_000_000_000,   managerKosten: 260_000_000_000_000 },
-  { id: 'mond',      welt: 'welt2', name: 'Mond-Mine',         emoji: '🌙', basisKosten: 535_000_000_000_000,  kostenFaktor: 1.10, dauerMs: 64000,  basisErtrag: 267_500_000_000_000,  managerKosten: 3_100_000_000_000_000 },
-  { id: 'mars',      welt: 'welt2', name: 'Mars-Kolonie',      emoji: '🔴', basisKosten: 6_420_000_000_000_000,kostenFaktor: 1.10, dauerMs: 128000, basisErtrag: 3_210_000_000_000_000,managerKosten: 37_000_000_000_000_000 },
-  { id: 'orbital',   welt: 'welt2', name: 'Orbital-Stadt',     emoji: '🛰️', basisKosten: 77_000_000_000_000_000,kostenFaktor: 1.10,dauerMs: 192000, basisErtrag: 38_500_000_000_000_000,managerKosten: 444_000_000_000_000_000 },
+  // --- Welt 2: Zukunft & Weltraum (Kosten/Erträge ×5 ggü. ursprünglicher Planung → Progression dauert länger) ---
+  { id: 'startup',   welt: 'welt2', name: 'Tech-Startup',      emoji: '💻', basisKosten: 10_750_000_000,        kostenFaktor: 1.10, dauerMs: 2000,   basisErtrag: 5_375_000_000,         managerKosten: 60_000_000_000 },
+  { id: 'eauto',     welt: 'welt2', name: 'E-Auto-Werk',       emoji: '🔋', basisKosten: 129_000_000_000,       kostenFaktor: 1.10, dauerMs: 4000,   basisErtrag: 64_500_000_000,        managerKosten: 750_000_000_000 },
+  { id: 'roboter',   welt: 'welt2', name: 'Roboterfabrik',     emoji: '🤖', basisKosten: 1_548_000_000_000,     kostenFaktor: 1.10, dauerMs: 8000,   basisErtrag: 774_000_000_000,       managerKosten: 9_000_000_000_000 },
+  { id: 'ki',        welt: 'welt2', name: 'KI-Rechenzentrum',  emoji: '🧠', basisKosten: 18_575_000_000_000,    kostenFaktor: 1.10, dauerMs: 16000,  basisErtrag: 9_285_000_000_000,     managerKosten: 108_000_000_000_000 },
+  { id: 'raumfahrt', welt: 'welt2', name: 'Raumfahrt-Firma',   emoji: '🚀', basisKosten: 222_900_000_000_000,   kostenFaktor: 1.10, dauerMs: 32000,  basisErtrag: 111_450_000_000_000,   managerKosten: 1_300_000_000_000_000 },
+  { id: 'mond',      welt: 'welt2', name: 'Mond-Mine',         emoji: '🌙', basisKosten: 2_675_000_000_000_000, kostenFaktor: 1.10, dauerMs: 64000,  basisErtrag: 1_337_500_000_000_000, managerKosten: 15_500_000_000_000_000 },
+  { id: 'mars',      welt: 'welt2', name: 'Mars-Kolonie',      emoji: '🔴', basisKosten: 32_100_000_000_000_000,kostenFaktor: 1.10, dauerMs: 128000, basisErtrag: 16_050_000_000_000_000,managerKosten: 185_000_000_000_000_000 },
+  { id: 'orbital',   welt: 'welt2', name: 'Orbital-Stadt',     emoji: '🛰️', basisKosten: 385_000_000_000_000_000,kostenFaktor: 1.10,dauerMs: 192000, basisErtrag: 192_500_000_000_000_000,managerKosten: 2_220_000_000_000_000_000 },
 
-  // --- Welt 3: Globales Imperium (Kurve setzt ab ~12× dem letzten Welt-2-Business fort) ---
-  { id: 'fluglinie',      welt: 'welt3', name: 'Fluglinie',       emoji: '✈️',  basisKosten: 920_000_000_000_000_000,           kostenFaktor: 1.10, dauerMs: 2000,   basisErtrag: 460_000_000_000_000_000,           managerKosten: 5_520_000_000_000_000_000 },
-  { id: 'reederei',       welt: 'welt3', name: 'Reederei',        emoji: '🚢',  basisKosten: 11_000_000_000_000_000_000,         kostenFaktor: 1.10, dauerMs: 4000,   basisErtrag: 5_500_000_000_000_000_000,         managerKosten: 66_000_000_000_000_000_000 },
-  { id: 'oelkonzern',     welt: 'welt3', name: 'Ölkonzern',       emoji: '🛢️',  basisKosten: 132_000_000_000_000_000_000,        kostenFaktor: 1.10, dauerMs: 8000,   basisErtrag: 66_000_000_000_000_000_000,        managerKosten: 792_000_000_000_000_000_000 },
-  { id: 'stahlwerk',      welt: 'welt3', name: 'Stahlwerk',       emoji: '🏭',  basisKosten: 1_584_000_000_000_000_000_000,      kostenFaktor: 1.10, dauerMs: 16000,  basisErtrag: 792_000_000_000_000_000_000,       managerKosten: 9_504_000_000_000_000_000_000 },
-  { id: 'techriese',      welt: 'welt3', name: 'Tech-Riese',      emoji: '📱',  basisKosten: 19_000_000_000_000_000_000_000,     kostenFaktor: 1.10, dauerMs: 32000,  basisErtrag: 9_500_000_000_000_000_000_000,     managerKosten: 114_000_000_000_000_000_000_000 },
-  { id: 'medienimperium', welt: 'welt3', name: 'Medienimperium',  emoji: '🎬',  basisKosten: 228_000_000_000_000_000_000_000,    kostenFaktor: 1.10, dauerMs: 64000,  basisErtrag: 114_000_000_000_000_000_000_000,   managerKosten: 1_368_000_000_000_000_000_000_000 },
-  { id: 'pharmakonzern',  welt: 'welt3', name: 'Pharmakonzern',   emoji: '💊',  basisKosten: 2_736_000_000_000_000_000_000_000,  kostenFaktor: 1.10, dauerMs: 128000, basisErtrag: 1_368_000_000_000_000_000_000_000, managerKosten: 16_416_000_000_000_000_000_000_000 },
-  { id: 'weltbank',       welt: 'welt3', name: 'Weltbank',        emoji: '🏛️',  basisKosten: 32_832_000_000_000_000_000_000_000, kostenFaktor: 1.10, dauerMs: 192000, basisErtrag: 16_416_000_000_000_000_000_000_000,managerKosten: 196_992_000_000_000_000_000_000_000 },
+  // --- Welt 3: Globales Imperium (Kurve setzt ab ~12× dem neuen Welt-2-Orbital fort; ×5 skaliert) ---
+  { id: 'fluglinie',      welt: 'welt3', name: 'Fluglinie',       emoji: '✈️',  basisKosten: 4_600_000_000_000_000_000,           kostenFaktor: 1.10, dauerMs: 2000,   basisErtrag: 2_300_000_000_000_000_000,            managerKosten: 27_600_000_000_000_000_000 },
+  { id: 'reederei',       welt: 'welt3', name: 'Reederei',        emoji: '🚢',  basisKosten: 55_000_000_000_000_000_000,          kostenFaktor: 1.10, dauerMs: 4000,   basisErtrag: 27_500_000_000_000_000_000,           managerKosten: 330_000_000_000_000_000_000 },
+  { id: 'oelkonzern',     welt: 'welt3', name: 'Ölkonzern',       emoji: '🛢️',  basisKosten: 660_000_000_000_000_000_000,         kostenFaktor: 1.10, dauerMs: 8000,   basisErtrag: 330_000_000_000_000_000_000,          managerKosten: 3_960_000_000_000_000_000_000 },
+  { id: 'stahlwerk',      welt: 'welt3', name: 'Stahlwerk',       emoji: '🏭',  basisKosten: 7_920_000_000_000_000_000_000,       kostenFaktor: 1.10, dauerMs: 16000,  basisErtrag: 3_960_000_000_000_000_000_000,        managerKosten: 47_520_000_000_000_000_000_000 },
+  { id: 'techriese',      welt: 'welt3', name: 'Tech-Riese',      emoji: '📱',  basisKosten: 95_000_000_000_000_000_000_000,      kostenFaktor: 1.10, dauerMs: 32000,  basisErtrag: 47_500_000_000_000_000_000_000,       managerKosten: 570_000_000_000_000_000_000_000 },
+  { id: 'medienimperium', welt: 'welt3', name: 'Medienimperium',  emoji: '🎬',  basisKosten: 1_140_000_000_000_000_000_000_000,   kostenFaktor: 1.10, dauerMs: 64000,  basisErtrag: 570_000_000_000_000_000_000_000,      managerKosten: 6_840_000_000_000_000_000_000_000 },
+  { id: 'pharmakonzern',  welt: 'welt3', name: 'Pharmakonzern',   emoji: '💊',  basisKosten: 13_680_000_000_000_000_000_000_000,  kostenFaktor: 1.10, dauerMs: 128000, basisErtrag: 6_840_000_000_000_000_000_000_000,    managerKosten: 82_080_000_000_000_000_000_000_000 },
+  { id: 'weltbank',       welt: 'welt3', name: 'Weltbank',        emoji: '🏛️',  basisKosten: 164_160_000_000_000_000_000_000_000, kostenFaktor: 1.10, dauerMs: 192000, basisErtrag: 82_080_000_000_000_000_000_000_000,   managerKosten: 984_960_000_000_000_000_000_000_000 },
 ]
 
 /** Schneller Zugriff auf eine Business-Konfiguration über die id. */
@@ -142,7 +142,7 @@ export const TALENTE: TalentConfig[] = [
   { id: 'temp5', ast: 'Tempo', name: 'Lichttempo',   beschreibung: 'Zyklen 70 % schneller', kosten: 5, voraussetzung: 'temp4' },
   { id: 'tempinf', ast: 'Tempo', name: 'Dauerschub', beschreibung: '+5 % Ertrag je Stufe', kosten: 5, voraussetzung: 'temp5', endlos: true },
   // Ast Kapital — Reset-Boni und Komfort
-  { id: 'k1', ast: 'Kapital', name: 'Startkapital',     beschreibung: 'Start mit 10.000 €',       kosten: 1, voraussetzung: null },
+  { id: 'k1', ast: 'Kapital', name: 'Welt-Rabatt',       beschreibung: 'Welten −30 % günstiger',   kosten: 1, voraussetzung: null },
   { id: 'k2', ast: 'Kapital', name: 'Manager-Rabatt',   beschreibung: 'Manager 50 % günstiger',   kosten: 2, voraussetzung: 'k1' },
   { id: 'k3', ast: 'Kapital', name: 'Investoren-Boost', beschreibung: 'Investoren wirken +50 %',  kosten: 3, voraussetzung: 'k2' },
   { id: 'k4', ast: 'Kapital', name: 'Fusion',           beschreibung: 'Investoren wirken +100 %', kosten: 4, voraussetzung: 'k3' },
