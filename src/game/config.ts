@@ -29,8 +29,9 @@ export const BALKEN_VOLL_AB_MS = 1000
  * Freischalt-Preise und Boni hier zentral tunen.
  */
 export const WELTEN: WeltConfig[] = [
-  { id: 'welt1', name: 'Klassik', emoji: '🌍', freischaltKosten: 0,               bonus: 0 },
-  { id: 'welt2', name: 'Zukunft', emoji: '🚀', freischaltKosten: 100_000_000_000, bonus: 0.5 },
+  { id: 'welt1', name: 'Klassik',  emoji: '🌍', freischaltKosten: 0,                        bonus: 0    },
+  { id: 'welt2', name: 'Zukunft',  emoji: '🚀', freischaltKosten: 100_000_000_000,           bonus: 0.5  },
+  { id: 'welt3', name: 'Imperium', emoji: '🌐', freischaltKosten: 50_000_000_000_000_000_000, bonus: 0.75 },
 ]
 
 /** Schneller Zugriff auf eine Welt über die id. */
@@ -59,6 +60,16 @@ export const BUSINESSES: BusinessConfig[] = [
   { id: 'mond',      welt: 'welt2', name: 'Mond-Mine',         emoji: '🌙', basisKosten: 535_000_000_000_000,  kostenFaktor: 1.10, dauerMs: 64000,  basisErtrag: 267_500_000_000_000,  managerKosten: 3_100_000_000_000_000 },
   { id: 'mars',      welt: 'welt2', name: 'Mars-Kolonie',      emoji: '🔴', basisKosten: 6_420_000_000_000_000,kostenFaktor: 1.10, dauerMs: 128000, basisErtrag: 3_210_000_000_000_000,managerKosten: 37_000_000_000_000_000 },
   { id: 'orbital',   welt: 'welt2', name: 'Orbital-Stadt',     emoji: '🛰️', basisKosten: 77_000_000_000_000_000,kostenFaktor: 1.10,dauerMs: 192000, basisErtrag: 38_500_000_000_000_000,managerKosten: 444_000_000_000_000_000 },
+
+  // --- Welt 3: Globales Imperium (Kurve setzt ab ~12× dem letzten Welt-2-Business fort) ---
+  { id: 'fluglinie',      welt: 'welt3', name: 'Fluglinie',       emoji: '✈️',  basisKosten: 920_000_000_000_000_000,           kostenFaktor: 1.10, dauerMs: 2000,   basisErtrag: 460_000_000_000_000_000,           managerKosten: 5_520_000_000_000_000_000 },
+  { id: 'reederei',       welt: 'welt3', name: 'Reederei',        emoji: '🚢',  basisKosten: 11_000_000_000_000_000_000,         kostenFaktor: 1.10, dauerMs: 4000,   basisErtrag: 5_500_000_000_000_000_000,         managerKosten: 66_000_000_000_000_000_000 },
+  { id: 'oelkonzern',     welt: 'welt3', name: 'Ölkonzern',       emoji: '🛢️',  basisKosten: 132_000_000_000_000_000_000,        kostenFaktor: 1.10, dauerMs: 8000,   basisErtrag: 66_000_000_000_000_000_000,        managerKosten: 792_000_000_000_000_000_000 },
+  { id: 'stahlwerk',      welt: 'welt3', name: 'Stahlwerk',       emoji: '🏭',  basisKosten: 1_584_000_000_000_000_000_000,      kostenFaktor: 1.10, dauerMs: 16000,  basisErtrag: 792_000_000_000_000_000_000,       managerKosten: 9_504_000_000_000_000_000_000 },
+  { id: 'techriese',      welt: 'welt3', name: 'Tech-Riese',      emoji: '📱',  basisKosten: 19_000_000_000_000_000_000_000,     kostenFaktor: 1.10, dauerMs: 32000,  basisErtrag: 9_500_000_000_000_000_000_000,     managerKosten: 114_000_000_000_000_000_000_000 },
+  { id: 'medienimperium', welt: 'welt3', name: 'Medienimperium',  emoji: '🎬',  basisKosten: 228_000_000_000_000_000_000_000,    kostenFaktor: 1.10, dauerMs: 64000,  basisErtrag: 114_000_000_000_000_000_000_000,   managerKosten: 1_368_000_000_000_000_000_000_000 },
+  { id: 'pharmakonzern',  welt: 'welt3', name: 'Pharmakonzern',   emoji: '💊',  basisKosten: 2_736_000_000_000_000_000_000_000,  kostenFaktor: 1.10, dauerMs: 128000, basisErtrag: 1_368_000_000_000_000_000_000_000, managerKosten: 16_416_000_000_000_000_000_000_000 },
+  { id: 'weltbank',       welt: 'welt3', name: 'Weltbank',        emoji: '🏛️',  basisKosten: 32_832_000_000_000_000_000_000_000, kostenFaktor: 1.10, dauerMs: 192000, basisErtrag: 16_416_000_000_000_000_000_000_000,managerKosten: 196_992_000_000_000_000_000_000_000 },
 ]
 
 /** Schneller Zugriff auf eine Business-Konfiguration über die id. */
@@ -100,7 +111,11 @@ export const RAENGE: { ab: number; titel: string }[] = [
   { ab: 1_000_000_000,       titel: 'Tycoon' },
   { ab: 100_000_000_000,     titel: 'Industrie-Mogul' },
   { ab: 1_000_000_000_000,   titel: 'Wirtschaftstitan' },
-  { ab: 100_000_000_000_000, titel: 'Imperator' },
+  { ab: 100_000_000_000_000,       titel: 'Imperator' },
+  { ab: 10_000_000_000_000_000,    titel: 'Weltmacht' },
+  { ab: 1_000_000_000_000_000_000, titel: 'Globalimperium' },
+  { ab: 100_000_000_000_000_000_000, titel: 'Weltenlenker' },
+  { ab: 10_000_000_000_000_000_000_000, titel: 'Allherrscher' },
 ]
 
 /** Einkommens-Bonus pro erreichtem Erfolg (0,02 = +2 %). */
