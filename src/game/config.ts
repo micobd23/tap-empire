@@ -88,8 +88,8 @@ export const BUSINESS_MAP: Record<string, BusinessConfig> = Object.fromEntries(
 export const INVESTOR_BASIS = 1_000_000
 /** Skalierung der Investoren-Formel (höher = mehr Investoren). */
 export const INVESTOR_K = 10
-/** Einkommens-Bonus pro Investor (0,02 = +2 %). */
-export const INVESTOR_BONUS = 0.02
+/** Einkommens-Bonus pro Investor (0,01 = +1 %). */
+export const INVESTOR_BONUS = 0.01
 /**
  * Empfohlener Mindest-Zuwachs an Investoren pro Prestige (0,5 = +50 %), damit sich der
  * Neustart spürbar lohnt und man nicht durch zu frühes Prestigen stagniert.
