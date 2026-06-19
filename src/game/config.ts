@@ -23,9 +23,9 @@ export const OFFLINE_MAX_MS = 8 * 60 * 60 * 1000
 export const BALKEN_VOLL_AB_MS = 1000
 
 /** Mindestverdienst in der aktuellen Runde, bevor Prestige freigeschaltet wird (Basis für Prestige 0→1). */
-export const PRESTIGE_RUNDEN_BASIS = 1_000_000
-/** Faktor, um den die Mindestschwelle mit jedem Prestige-Level wächst. */
-export const PRESTIGE_RUNDEN_FAKTOR = 2.5
+export const PRESTIGE_RUNDEN_BASIS = 100_000_000
+/** Faktor, um den die Mindestschwelle mit jedem Prestige-Level wächst (steil = unproportional). */
+export const PRESTIGE_RUNDEN_FAKTOR = 5
 
 /**
  * Die Welten. Welt 1 ist von Anfang an frei; weitere Welten schaltet man mit Geld frei
