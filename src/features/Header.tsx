@@ -16,7 +16,7 @@ export function Header() {
   const rang = aktuellerRang(state.gesamtVerdient)
 
   return (
-    <header className="sticky top-0 z-10 border-b border-slate-700 bg-slate-900/95 px-4 py-3 text-center backdrop-blur">
+    <header className="sticky top-0 z-30 border-b border-slate-700 bg-slate-900/95 px-4 py-3 text-center backdrop-blur">
       <div className="text-xs font-medium text-amber-300/90">🏅 {rang.titel}</div>
       <div className="text-3xl font-semibold text-emerald-400">{formatGeld(state.geld)} €</div>
       <div className="text-sm text-slate-400">{formatGeld(proSekunde)} € / Sekunde</div>
