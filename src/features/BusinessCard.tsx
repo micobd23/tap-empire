@@ -62,19 +62,18 @@ export function BusinessCard({ id }: { id: string }) {
       clearInterval(wiederholRef.current)
       wiederholRef.current = null
     }
-    window.removeEventListener('pointerup', haltStop)
-    window.removeEventListener('pointercancel', haltStop)
   }
 
-  function haltStart() {
+  function haltStart(e: React.PointerEvent) {
+    // Verhindert, dass iOS den Hold als Scroll-Geste interpretiert und pointercancel feuert.
+    e.preventDefault()
     if (startRef.current !== null || wiederholRef.current !== null) return
-    // Nach 350 ms Halten automatisch wiederholen — der erste Kauf kommt vom onClick.
     startRef.current = window.setTimeout(() => {
       wiederholRef.current = window.setInterval(() => kaufen(id, mengeRef.current), 120)
     }, 350)
-    // Global lauschen, falls der Knopf mitten im Halten deaktiviert wird (Geld leer).
-    window.addEventListener('pointerup', haltStop)
-    window.addEventListener('pointercancel', haltStop)
+    // { once: true } → Listener entfernt sich selbst, kein Referenz-Problem bei Re-renders.
+    window.addEventListener('pointerup', haltStop, { once: true })
+    window.addEventListener('pointercancel', haltStop, { once: true })
   }
 
   // Sicherheitsnetz: Timer stoppen, falls die Karte verschwindet.
