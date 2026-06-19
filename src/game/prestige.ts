@@ -31,8 +31,11 @@ export function investorenFuer(gesamtVerdient: number): number {
   return Math.floor(INVESTOR_K * Math.sqrt(gesamtVerdient / INVESTOR_BASIS))
 }
 
-/** Wie viele NEUE Investoren ein Reset gerade einbringen würde (für die Vorschau). */
+/** Wie viele NEUE Investoren ein Reset gerade einbringen würde (für die Vorschau).
+ *  Solange die Runden-Schwelle nicht erreicht ist, bleibt der Wert 0 — Investoren
+ *  sind erst "verdient", wenn man die Runde abgeschlossen hat. */
 export function neueInvestorenVorschau(state: GameState): number {
+  if (rundenVerdienst(state) < rundenSchwelle(state.prestigeCount)) return 0
   return Math.max(0, investorenFuer(state.gesamtVerdient) - state.investoren)
 }
 
