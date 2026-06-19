@@ -22,6 +22,7 @@ export function neuerSpielstand(): GameState {
     erfolge: [],
     erfolgeAbgeholt: [],
     freigeschalteteWelten: ['welt1'],
+    gesamtVerdientBeimLetztenPrestige: 0,
     zuletztGesehen: Date.now(),
   }
 }

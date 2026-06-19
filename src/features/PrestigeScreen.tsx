@@ -9,6 +9,8 @@ import {
   naechsteAutoManagerSchwelle,
   neueInvestorenVorschau,
   prestigeLohntSich,
+  rundenSchwelle,
+  rundenVerdienst,
 } from '../game/prestige'
 import { verfuegbareTalentpunkte } from '../game/talents'
 import { formatGeld } from '../game/format'
@@ -28,6 +30,8 @@ export function PrestigeScreen() {
   const naechste = useGame((s) => naechsteAutoManagerSchwelle(s.state.prestigeCount))
   const prestige = useGame((s) => s.prestige)
   const zuruecksetzen = useGame((s) => s.spielstandZuruecksetzen)
+  const rundenErtrag = useGame((s) => rundenVerdienst(s.state))
+  const schwelle = useGame((s) => rundenSchwelle(s.state.prestigeCount))
   const [bestaetige, setBestaetige] = useState(false)
   const [resetBestaetige, setResetBestaetige] = useState(false)
 
@@ -46,9 +50,29 @@ export function PrestigeScreen() {
           {naechste !== null && ` · nächster bei Level ${naechste}`}
         </p>
 
-        {!kann && (
+        {/* Runden-Fortschrittsbalken */}
+        <div className="mt-3">
+          <div className="mb-1 flex justify-between text-xs text-amber-300/70">
+            <span>Runden-Verdienst</span>
+            <span>{formatGeld(rundenErtrag)} / {formatGeld(schwelle)}</span>
+          </div>
+          <div className="h-2 w-full overflow-hidden rounded-full bg-slate-800">
+            <div
+              className="h-full rounded-full bg-amber-500 transition-all duration-500"
+              style={{ width: `${Math.min(100, (rundenErtrag / schwelle) * 100).toFixed(1)}%` }}
+            />
+          </div>
+        </div>
+
+        {rundenErtrag < schwelle && (
           <p className="mt-3 rounded-lg bg-slate-800/60 py-2 text-sm text-slate-400">
-            Verdiene insgesamt mehr (ab 1 Mio. €), um Investoren zu bekommen.
+            Verdiene diese Runde noch {formatGeld(schwelle - rundenErtrag)}, um prestige-n zu können.
+          </p>
+        )}
+
+        {!kann && rundenErtrag >= schwelle && (
+          <p className="mt-3 rounded-lg bg-slate-800/60 py-2 text-sm text-slate-400">
+            Verdiene noch etwas mehr — du brauchst mindestens 1 neuen Investor.
           </p>
         )}
 

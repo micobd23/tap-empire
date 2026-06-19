@@ -7,11 +7,23 @@ import {
   INVESTOR_BONUS,
   INVESTOR_K,
   PRESTIGE_EMPFEHLUNG_FAKTOR,
+  PRESTIGE_RUNDEN_BASIS,
+  PRESTIGE_RUNDEN_FAKTOR,
   START_GELD,
 } from './config'
 import { talentEffekte } from './talents'
 import { gesamtEinkommenProSekunde, meisterschaftsFaktor, weltBonusFaktor } from './economy'
 import { erfolgsFaktor } from './erfolge'
+
+/** Verdienst in der aktuellen Runde (seit letztem Prestige). */
+export function rundenVerdienst(state: GameState): number {
+  return state.gesamtVerdient - (state.gesamtVerdientBeimLetztenPrestige ?? 0)
+}
+
+/** Mindestverdienst in dieser Runde, bevor Prestige freigeschaltet wird. Wächst mit dem Prestige-Level. */
+export function rundenSchwelle(prestigeCount: number): number {
+  return PRESTIGE_RUNDEN_BASIS * Math.pow(PRESTIGE_RUNDEN_FAKTOR, prestigeCount)
+}
 
 /** Wie viele Investoren der gesamte Lebensverdienst wert ist (Wurzel = abnehmender Ertrag). */
 export function investorenFuer(gesamtVerdient: number): number {
@@ -54,9 +66,12 @@ export function globalerEinkommensMultiplikator(state: GameState): number {
   return multiplikatorAufschluesselung(state).gesamt
 }
 
-/** Lohnt sich ein Prestige schon (gibt es neue Investoren zu holen)? */
+/** Lohnt sich ein Prestige schon (gibt es neue Investoren UND Runden-Schwelle erreicht)? */
 export function kannPrestige(state: GameState): boolean {
-  return neueInvestorenVorschau(state) > 0
+  return (
+    neueInvestorenVorschau(state) > 0 &&
+    rundenVerdienst(state) >= rundenSchwelle(state.prestigeCount)
+  )
 }
 
 /**
@@ -128,6 +143,7 @@ export function prestigeDurchfuehren(state: GameState): GameState {
     // Welten müssen nach jedem Prestige neu freigeschaltet werden.
     freigeschalteteWelten: ['welt1'],
     // gesamtVerdient bleibt erhalten (Basis für die Investoren über alle Runs)
+    gesamtVerdientBeimLetztenPrestige: state.gesamtVerdient,
     zuletztGesehen: Date.now(),
   }
 }

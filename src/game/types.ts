@@ -80,6 +80,8 @@ export interface GameState {
   erfolgeAbgeholt: string[]
   /** Ids der freigeschalteten Welten (mindestens 'welt1'; weitere kosten Geld). */
   freigeschalteteWelten: string[]
+  /** gesamtVerdient-Wert beim letzten Prestige (0 = noch kein Prestige). Basis für den Runden-Verdienst. */
+  gesamtVerdientBeimLetztenPrestige: number
   /** Zeitstempel des letzten Speicherns — für die Offline-Berechnung. */
   zuletztGesehen: number
 }
