@@ -136,8 +136,6 @@ export function BusinessCard({ id }: { id: string }) {
       <button
         onClick={() => kaufen(id, mengeRef.current)}
         onPointerDown={haltStart}
-        onPointerUp={haltStop}
-        onPointerLeave={haltStop}
         onPointerCancel={haltStop}
         onContextMenu={(e) => e.preventDefault()}
         disabled={!kannKaufen}

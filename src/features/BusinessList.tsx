@@ -70,7 +70,7 @@ export function BusinessList() {
           title="Tippen wechselt die Kaufmenge: ×1 → ×10 → ×100 → Max"
           className="shrink-0 rounded-lg bg-slate-800 px-3 py-1.5 text-sm font-medium text-slate-200"
         >
-          ↻ Menge {kaufModus === 'max' ? 'Max' : `×${kaufModus}`}
+          ↻ {kaufModus === 'max' ? 'Max' : `×${kaufModus}`}
         </button>
         {autoKaufFrei && (
           <button

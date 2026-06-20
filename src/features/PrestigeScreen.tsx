@@ -50,30 +50,29 @@ export function PrestigeScreen() {
           {naechste !== null && ` · nächster bei Level ${naechste}`}
         </p>
 
-        {/* Runden-Fortschrittsbalken */}
-        <div className="mt-3">
-          <div className="mb-1 flex justify-between text-xs text-amber-300/70">
-            <span>Runden-Verdienst</span>
-            <span>{formatGeld(rundenErtrag)} / {formatGeld(schwelle)}</span>
+        {/* Runden-Fortschrittsbalken — verschwindet sobald Prestige freigeschaltet ist */}
+        {!kann && (
+          <div className="mt-3">
+            <div className="mb-1 flex justify-between text-xs text-amber-300/70">
+              <span>Runden-Verdienst</span>
+              <span>{formatGeld(rundenErtrag)} / {formatGeld(schwelle)}</span>
+            </div>
+            <div className="h-2 w-full overflow-hidden rounded-full bg-slate-800">
+              <div
+                className="h-full rounded-full bg-amber-500 transition-all duration-500"
+                style={{ width: `${Math.min(100, (rundenErtrag / schwelle) * 100).toFixed(1)}%` }}
+              />
+            </div>
+            {rundenErtrag < schwelle ? (
+              <p className="mt-3 rounded-lg bg-slate-800/60 py-2 text-sm text-slate-400">
+                Verdiene diese Runde noch {formatGeld(schwelle - rundenErtrag)}, um prestige-n zu können.
+              </p>
+            ) : (
+              <p className="mt-3 rounded-lg bg-slate-800/60 py-2 text-sm text-slate-400">
+                Verdiene noch etwas mehr — du brauchst mindestens 1 neuen Investor.
+              </p>
+            )}
           </div>
-          <div className="h-2 w-full overflow-hidden rounded-full bg-slate-800">
-            <div
-              className="h-full rounded-full bg-amber-500 transition-all duration-500"
-              style={{ width: `${Math.min(100, (rundenErtrag / schwelle) * 100).toFixed(1)}%` }}
-            />
-          </div>
-        </div>
-
-        {rundenErtrag < schwelle && (
-          <p className="mt-3 rounded-lg bg-slate-800/60 py-2 text-sm text-slate-400">
-            Verdiene diese Runde noch {formatGeld(schwelle - rundenErtrag)}, um prestige-n zu können.
-          </p>
-        )}
-
-        {!kann && rundenErtrag >= schwelle && (
-          <p className="mt-3 rounded-lg bg-slate-800/60 py-2 text-sm text-slate-400">
-            Verdiene noch etwas mehr — du brauchst mindestens 1 neuen Investor.
-          </p>
         )}
 
         {kann && (
