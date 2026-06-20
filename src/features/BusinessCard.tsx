@@ -44,6 +44,7 @@ export function BusinessCard({ id }: { id: string }) {
   }, [anzahl])
 
   const weltFarbe = WELT_MAP[b.welt].farbe
+  const weltTint = WELT_MAP[b.welt].farbeTint
 
   const aktiv = anzahl > 0
   const tempoFaktor = tempoMeilensteinFaktor(anzahl)
@@ -154,13 +155,17 @@ export function BusinessCard({ id }: { id: string }) {
         onClick={handleTap}
         disabled={!aktiv || hatManager}
         aria-label={`${b.name} produzieren`}
-        className={`relative flex h-16 w-16 shrink-0 items-center justify-center overflow-hidden rounded-lg bg-slate-900 text-3xl transition-transform active:scale-90 disabled:active:scale-100 ${aktiv ? '' : 'opacity-60'}`}
+        className={`relative flex h-16 w-16 shrink-0 items-center justify-center overflow-hidden rounded-lg text-3xl transition-transform active:scale-90 disabled:active:scale-100 ${aktiv ? '' : 'opacity-60'}`}
+        style={{ background: `${weltFarbe}18`, border: `1px solid ${weltFarbe}35` }}
       >
         <span key={popKey} className={`relative z-10 ${popKey > 0 ? 'tap-pop' : ''}`}>
           {b.emoji}
         </span>
         {aktiv && (
-          <span className="absolute left-0.5 top-0.5 z-10 rounded bg-slate-950/70 px-1 text-[10px] font-semibold leading-tight text-slate-200">
+          <span
+            className="absolute left-0.5 top-0.5 z-10 rounded px-1 text-[10px] font-semibold leading-tight"
+            style={{ background: 'rgba(0,0,0,0.65)', color: weltTint }}
+          >
             ×{anzahl}
           </span>
         )}

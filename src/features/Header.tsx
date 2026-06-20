@@ -1,6 +1,7 @@
 // Kopfzeile: Geld, automatisches Einkommen pro Sekunde und (ab Prestige) der antippbare Multiplikator.
 import { useState } from 'react'
 import { useGame } from '../store'
+import { WELT_MAP } from '../game/config'
 import { einkommenProSekundeGesamt, multiplikatorAufschluesselung } from '../game/prestige'
 import { aktuellerRang } from '../game/economy'
 import { formatGeld } from '../game/format'
@@ -10,12 +11,14 @@ export function Header() {
   // Den State einmal auswählen und die abgeleiteten Werte im Render berechnen.
   // (Nicht im Selector ein Objekt erzeugen — das löst in Zustand eine Endlosschleife aus.)
   const state = useGame((s) => s.state)
+  const aktiveWelt = useGame((s) => s.aktiveWelt)
   const [zeigeDetails, setZeigeDetails] = useState(false)
   const [tonAn, setTonAn] = useState(soundAktiv())
 
   const proSekunde = einkommenProSekundeGesamt(state)
   const auf = multiplikatorAufschluesselung(state)
   const rang = aktuellerRang(state.gesamtVerdient)
+  const weltFarbe = WELT_MAP[aktiveWelt].farbe
 
   return (
     <header className="sticky top-0 z-30 border-b border-slate-700 bg-slate-900/95 px-4 py-3 text-center backdrop-blur">
@@ -27,7 +30,7 @@ export function Header() {
         {tonAn ? '🔊' : '🔇'}
       </button>
       <div className="text-xs font-medium text-amber-300/90">🏅 {rang.titel}</div>
-      <div className="text-3xl font-semibold text-emerald-400">{formatGeld(state.geld)} €</div>
+      <div className="text-3xl font-semibold" style={{ color: weltFarbe }}>{formatGeld(state.geld)} €</div>
       <div className="text-sm text-slate-400">{formatGeld(proSekunde)} € / Sekunde</div>
       {state.investoren > 0 && (
         <div className="mt-0.5">

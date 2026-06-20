@@ -11,6 +11,8 @@ export interface WeltConfig {
   bonus: number
   /** Akzentfarbe der Welt (CSS-Farbwert) — für Rand, Balken, Knöpfe. */
   farbe: string
+  /** Hellere Variante der Akzentfarbe — für Text auf dunklem Hintergrund (Badges, Tints). */
+  farbeTint: string
 }
 
 /** Feste Eigenschaften eines Business (kommen aus der config.ts, ändern sich nie). */
