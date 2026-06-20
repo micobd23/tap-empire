@@ -9,6 +9,8 @@ export interface WeltConfig {
   freischaltKosten: number
   /** Dauerhafter globaler Einkommens-Bonus, sobald freigeschaltet (0,5 = +50 %). */
   bonus: number
+  /** Akzentfarbe der Welt (CSS-Farbwert) — für Rand, Balken, Knöpfe. */
+  farbe: string
 }
 
 /** Feste Eigenschaften eines Business (kommen aus der config.ts, ändern sich nie). */

@@ -1,7 +1,7 @@
 // Eine Business-Karte: antippen zum Produzieren (mit fliegender +X), kaufen, Manager anstellen.
 import { useEffect, useRef, useState } from 'react'
 import { useGame } from '../store'
-import { BALKEN_VOLL_AB_MS, BUSINESS_MAP, MEILENSTEINE } from '../game/config'
+import { BALKEN_VOLL_AB_MS, BUSINESS_MAP, MEILENSTEINE, WELT_MAP } from '../game/config'
 import { ertragProZyklus, kostenFuer, maxKaufbar, tempoMeilensteinFaktor } from '../game/economy'
 import { globalerEinkommensMultiplikator } from '../game/prestige'
 import { talentEffekte } from '../game/talents'
@@ -42,6 +42,8 @@ export function BusinessCard({ id }: { id: string }) {
       return () => clearTimeout(t)
     }
   }, [anzahl])
+
+  const weltFarbe = WELT_MAP[b.welt].farbe
 
   const aktiv = anzahl > 0
   const tempoFaktor = tempoMeilensteinFaktor(anzahl)
@@ -127,7 +129,8 @@ export function BusinessCard({ id }: { id: string }) {
 
   return (
     <div
-      className={`relative mb-2 flex items-center gap-3 rounded-xl border border-slate-700 bg-slate-800 p-3 ${blitz ? 'meilenstein-blitz' : ''}`}
+      className={`relative mb-2 flex items-center gap-3 rounded-r-xl border border-slate-700 bg-slate-800 p-3 ${blitz ? 'meilenstein-blitz' : ''}`}
+      style={{ borderLeft: `3px solid ${weltFarbe}` }}
     >
       {floats.map((f) => (
         <span
@@ -162,14 +165,14 @@ export function BusinessCard({ id }: { id: string }) {
           </span>
         )}
         <div
-          className="absolute bottom-0 left-0 h-1.5 bg-emerald-500"
-          style={{ width: `${prozent}%` }}
+          className="absolute bottom-0 left-0 h-2"
+          style={{ width: `${prozent}%`, background: weltFarbe }}
         />
       </button>
 
       <div className={`min-w-0 flex-1 ${aktiv ? '' : 'opacity-60'}`}>
         <div className="truncate font-medium text-slate-100">{b.name}</div>
-        <div className="whitespace-nowrap text-sm text-emerald-400">
+        <div className="whitespace-nowrap text-sm" style={{ color: weltFarbe }}>
           +{formatGeld(ertragProSekunde)} € / s
         </div>
         {aktiv && !hatManager && (
@@ -193,7 +196,8 @@ export function BusinessCard({ id }: { id: string }) {
         onPointerCancel={haltStop}
         onContextMenu={(e) => e.preventDefault()}
         disabled={!kannKaufen}
-        className="w-28 shrink-0 touch-none select-none rounded-lg bg-emerald-600 px-2 py-2 text-center font-medium text-white transition-transform active:scale-95 disabled:bg-slate-700 disabled:text-slate-500 disabled:active:scale-100"
+        className="w-28 shrink-0 touch-none select-none rounded-lg px-2 py-2 text-center font-medium text-white transition-transform active:scale-95 disabled:bg-slate-700 disabled:text-slate-500 disabled:active:scale-100"
+        style={kannKaufen ? { background: weltFarbe } : undefined}
       >
         <div className="text-xs opacity-80">Kaufen ×{menge}</div>
         <div className="truncate text-sm">{formatGeld(kosten)} €</div>

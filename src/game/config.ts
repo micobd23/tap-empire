@@ -34,9 +34,9 @@ export const PRESTIGE_RUNDEN_FAKTOR = 5
  * Freischalt-Preise und Boni hier zentral tunen.
  */
 export const WELTEN: WeltConfig[] = [
-  { id: 'welt1', name: 'Klassik',  emoji: '🌍', freischaltKosten: 0,                        bonus: 0    },
-  { id: 'welt2', name: 'Zukunft',  emoji: '🚀', freischaltKosten: 800_000_000_000,             bonus: 0.5  },
-  { id: 'welt3', name: 'Imperium', emoji: '🌐', freischaltKosten: 250_000_000_000_000_000_000, bonus: 0.75 },
+  { id: 'welt1', name: 'Klassik',  emoji: '🌍', freischaltKosten: 0,                        bonus: 0,    farbe: '#22c55e' },
+  { id: 'welt2', name: 'Zukunft',  emoji: '🚀', freischaltKosten: 800_000_000_000,             bonus: 0.5,  farbe: '#06b6d4' },
+  { id: 'welt3', name: 'Imperium', emoji: '🌐', freischaltKosten: 250_000_000_000_000_000_000, bonus: 0.75, farbe: '#a855f7' },
 ]
 
 /** Schneller Zugriff auf eine Welt über die id. */

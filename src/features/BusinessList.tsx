@@ -1,5 +1,5 @@
 // Die Business-Liste: oben Welt-Umschalter, dann Kaufmengen (×1/×10/×100/Max), dann die Businesses.
-import { AUTO_KAUFER_AB_PRESTIGE, BUSINESSES, WELTEN } from '../game/config'
+import { AUTO_KAUFER_AB_PRESTIGE, BUSINESSES, WELTEN, WELT_MAP } from '../game/config'
 import { useGame, type KaufModus } from '../store'
 import { formatGeld } from '../game/format'
 import { BusinessCard } from './BusinessCard'
@@ -37,8 +37,9 @@ export function BusinessList() {
                   key={w.id}
                   onClick={() => setAktiveWelt(w.id)}
                   className={`flex-1 rounded-lg py-1.5 text-sm font-medium ${
-                    aktiveWelt === w.id ? 'bg-emerald-600 text-white' : 'bg-slate-800 text-slate-400'
+                    aktiveWelt === w.id ? 'text-white' : 'bg-slate-800 text-slate-400'
                   }`}
+                  style={aktiveWelt === w.id ? { background: WELT_MAP[w.id].farbe } : undefined}
                 >
                   {w.emoji} {w.name}
                 </button>
