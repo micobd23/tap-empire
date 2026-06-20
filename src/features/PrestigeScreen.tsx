@@ -14,6 +14,7 @@ import {
 } from '../game/prestige'
 import { verfuegbareTalentpunkte } from '../game/talents'
 import { formatGeld } from '../game/format'
+import { soundPrestige } from '../sound'
 import { TalentBaum } from './TalentBaum'
 import { SpielstandBackup } from './SpielstandBackup'
 
@@ -34,9 +35,11 @@ export function PrestigeScreen() {
   const schwelle = useGame((s) => rundenSchwelle(s.state.prestigeCount))
   const [bestaetige, setBestaetige] = useState(false)
   const [resetBestaetige, setResetBestaetige] = useState(false)
+  const [flash, setFlash] = useState(false)
 
   return (
     <div className="pt-3">
+      {flash && <div className="prestige-flash pointer-events-none fixed inset-0 z-50" />}
       <div className="mb-4 rounded-2xl border border-amber-700/50 bg-amber-950/30 p-4 text-center">
         <p className="text-sm text-amber-300/80">Neustart bringt dir</p>
         <p className="text-3xl font-semibold text-amber-300">
@@ -105,6 +108,9 @@ export function PrestigeScreen() {
             <div className="flex gap-2">
               <button
                 onClick={() => {
+                  soundPrestige()
+                  setFlash(true)
+                  setTimeout(() => setFlash(false), 700)
                   prestige()
                   setBestaetige(false)
                 }}

@@ -1,11 +1,12 @@
 // Eine Business-Karte: antippen zum Produzieren (mit fliegender +X), kaufen, Manager anstellen.
 import { useEffect, useRef, useState } from 'react'
 import { useGame } from '../store'
-import { BALKEN_VOLL_AB_MS, BUSINESS_MAP } from '../game/config'
+import { BALKEN_VOLL_AB_MS, BUSINESS_MAP, MEILENSTEINE } from '../game/config'
 import { ertragProZyklus, kostenFuer, maxKaufbar, tempoMeilensteinFaktor } from '../game/economy'
 import { globalerEinkommensMultiplikator } from '../game/prestige'
 import { talentEffekte } from '../game/talents'
 import { formatGeld } from '../game/format'
+import { soundKauf, soundMeilenstein, soundTap } from '../sound'
 
 export function BusinessCard({ id }: { id: string }) {
   const b = BUSINESS_MAP[id]
@@ -23,6 +24,24 @@ export function BusinessCard({ id }: { id: string }) {
   const managerKaufen = useGame((s) => s.managerKaufen)
 
   const [floats, setFloats] = useState<{ key: number; wert: number }[]>([])
+  // Münz-Partikel (mit zufälliger Flugbahn) und der Pop-Zähler fürs Emoji.
+  const [muenzen, setMuenzen] = useState<{ key: number; dx: number; dy: number }[]>([])
+  const [popKey, setPopKey] = useState(0)
+  // Kurzes Aufblitzen, wenn ein Meilenstein überschritten wird.
+  const [blitz, setBlitz] = useState(false)
+  const vorigeAnzahl = useRef(anzahl)
+
+  // Erkennt beim Kauf, ob eine Meilenstein-Schwelle (25/50/100/…) übersprungen wurde.
+  useEffect(() => {
+    const vor = vorigeAnzahl.current
+    vorigeAnzahl.current = anzahl
+    if (anzahl > vor && MEILENSTEINE.some((m) => vor < m && anzahl >= m)) {
+      setBlitz(true)
+      soundMeilenstein()
+      const t = window.setTimeout(() => setBlitz(false), 600)
+      return () => clearTimeout(t)
+    }
+  }, [anzahl])
 
   const aktiv = anzahl > 0
   const tempoFaktor = tempoMeilensteinFaktor(anzahl)
@@ -49,7 +68,10 @@ export function BusinessCard({ id }: { id: string }) {
   // (onPointerDown wurde dort oft verschluckt). Hält man den Knopf, kommen nach kurzer Zeit
   // automatisch Wiederholungen dazu. mengeRef hält immer die aktuelle Menge (Max-Modus zählt mit).
   const mengeRef = useRef(menge)
-  mengeRef.current = menge
+  // Ref nach jedem Render aktualisieren (nicht während des Renders — das verbietet React).
+  useEffect(() => {
+    mengeRef.current = menge
+  })
   const startRef = useRef<number | null>(null)
   const wiederholRef = useRef<number | null>(null)
 
@@ -82,13 +104,31 @@ export function BusinessCard({ id }: { id: string }) {
   function handleTap() {
     if (!aktiv || hatManager || laeuft) return
     antippen(id)
+    soundTap()
+    // Vibration wirkt nur auf Android — iOS-Safari ignoriert die API (schadet aber nicht).
+    if ('vibrate' in navigator) navigator.vibrate(8)
     const key = Date.now() + Math.random()
     setFloats((f) => [...f, { key, wert: ertrag }])
     setTimeout(() => setFloats((f) => f.filter((x) => x.key !== key)), 900)
+    // Ein paar Münzen in zufällige Richtungen wegspritzen lassen.
+    const neue = Array.from({ length: 4 }, (_, i) => ({
+      key: key + i + 1,
+      dx: (Math.random() - 0.5) * 60,
+      dy: -30 - Math.random() * 40,
+    }))
+    setMuenzen((m) => [...m, ...neue])
+    setTimeout(() => {
+      const keys = new Set(neue.map((n) => n.key))
+      setMuenzen((m) => m.filter((x) => !keys.has(x.key)))
+    }, 700)
+    // Emoji kurz aufpoppen (Key-Wechsel startet die CSS-Animation neu).
+    setPopKey((k) => k + 1)
   }
 
   return (
-    <div className="relative mb-2 flex items-center gap-3 rounded-xl border border-slate-700 bg-slate-800 p-3">
+    <div
+      className={`relative mb-2 flex items-center gap-3 rounded-xl border border-slate-700 bg-slate-800 p-3 ${blitz ? 'meilenstein-blitz' : ''}`}
+    >
       {floats.map((f) => (
         <span
           key={f.key}
@@ -97,14 +137,25 @@ export function BusinessCard({ id }: { id: string }) {
           +{formatGeld(f.wert)} €
         </span>
       ))}
+      {muenzen.map((m) => (
+        <span
+          key={m.key}
+          className="muenze pointer-events-none absolute left-7 top-7 z-20 text-base"
+          style={{ '--dx': `${m.dx}px`, '--dy': `${m.dy}px` } as React.CSSProperties}
+        >
+          🪙
+        </span>
+      ))}
 
       <button
         onClick={handleTap}
         disabled={!aktiv || hatManager}
         aria-label={`${b.name} produzieren`}
-        className={`relative flex h-16 w-16 shrink-0 items-center justify-center overflow-hidden rounded-lg bg-slate-900 text-3xl transition-transform active:scale-95 disabled:active:scale-100 ${aktiv ? '' : 'opacity-60'}`}
+        className={`relative flex h-16 w-16 shrink-0 items-center justify-center overflow-hidden rounded-lg bg-slate-900 text-3xl transition-transform active:scale-90 disabled:active:scale-100 ${aktiv ? '' : 'opacity-60'}`}
       >
-        <span className="relative z-10">{b.emoji}</span>
+        <span key={popKey} className={`relative z-10 ${popKey > 0 ? 'tap-pop' : ''}`}>
+          {b.emoji}
+        </span>
         {aktiv && (
           <span className="absolute left-0.5 top-0.5 z-10 rounded bg-slate-950/70 px-1 text-[10px] font-semibold leading-tight text-slate-200">
             ×{anzahl}
@@ -134,7 +185,10 @@ export function BusinessCard({ id }: { id: string }) {
       </div>
 
       <button
-        onClick={() => kaufen(id, mengeRef.current)}
+        onClick={() => {
+          kaufen(id, mengeRef.current)
+          soundKauf()
+        }}
         onPointerDown={haltStart}
         onPointerCancel={haltStop}
         onContextMenu={(e) => e.preventDefault()}
