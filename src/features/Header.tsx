@@ -29,6 +29,9 @@ export function Header() {
       >
         {tonAn ? '🔊' : '🔇'}
       </button>
+      <div style={{ fontSize: '11px', fontWeight: 700, letterSpacing: '0.18em', color: weltFarbe, opacity: 0.6, fontFamily: 'monospace' }}>
+        TAP EMPIRE
+      </div>
       <div className="text-xs font-medium text-amber-300/90">🏅 {rang.titel}</div>
       <div className="text-3xl font-semibold" style={{ color: weltFarbe }}>{formatGeld(state.geld)} €</div>
       <div className="text-sm text-slate-400">{formatGeld(proSekunde)} € / Sekunde</div>

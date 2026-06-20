@@ -130,8 +130,11 @@ export function BusinessCard({ id }: { id: string }) {
 
   return (
     <div
-      className={`relative mb-2 flex items-center gap-3 rounded-r-xl border border-slate-700 bg-slate-800 p-3 ${blitz ? 'meilenstein-blitz' : ''}`}
-      style={{ borderLeft: `3px solid ${weltFarbe}` }}
+      className={`relative mb-2 flex items-center gap-3 p-3 ${aktiv ? 'rounded-r-xl bg-slate-800' : 'rounded-xl bg-slate-900/80'} ${blitz ? 'meilenstein-blitz' : ''}`}
+      style={aktiv
+        ? { border: '1px solid #334155', borderLeft: `3px solid ${weltFarbe}` }
+        : { border: '1.5px dashed #2a3547' }
+      }
     >
       {floats.map((f) => (
         <span
@@ -155,8 +158,11 @@ export function BusinessCard({ id }: { id: string }) {
         onClick={handleTap}
         disabled={!aktiv || hatManager}
         aria-label={`${b.name} produzieren`}
-        className={`relative flex h-16 w-16 shrink-0 items-center justify-center overflow-hidden rounded-lg text-3xl transition-transform active:scale-90 disabled:active:scale-100 ${aktiv ? '' : 'opacity-60'}`}
-        style={{ background: `${weltFarbe}18`, border: `1px solid ${weltFarbe}35` }}
+        className="relative flex h-16 w-16 shrink-0 items-center justify-center overflow-hidden rounded-lg text-3xl transition-transform active:scale-90 disabled:active:scale-100"
+        style={aktiv
+          ? { background: `${weltFarbe}18`, border: `1px solid ${weltFarbe}35` }
+          : { background: '#0d1424', filter: 'grayscale(1) opacity(0.45)' }
+        }
       >
         <span key={popKey} className={`relative z-10 ${popKey > 0 ? 'tap-pop' : ''}`}>
           {b.emoji}
@@ -175,11 +181,17 @@ export function BusinessCard({ id }: { id: string }) {
         />
       </button>
 
-      <div className={`min-w-0 flex-1 ${aktiv ? '' : 'opacity-60'}`}>
-        <div className="truncate font-medium text-slate-100">{b.name}</div>
-        <div className="whitespace-nowrap text-sm" style={{ color: weltFarbe }}>
-          +{formatGeld(ertragProSekunde)} € / s
-        </div>
+      <div className={`min-w-0 flex-1 ${aktiv ? '' : 'opacity-55'}`}>
+        <div className={`truncate font-medium ${aktiv ? 'text-slate-100' : 'text-slate-400'}`}>{b.name}</div>
+        {aktiv ? (
+          <div className="whitespace-nowrap text-sm" style={{ color: weltFarbe }}>
+            +{formatGeld(ertragProSekunde)} € / s
+          </div>
+        ) : (
+          <div className="whitespace-nowrap text-sm text-slate-500">
+            ab {formatGeld(b.basisKosten)} €
+          </div>
+        )}
         {aktiv && !hatManager && (
           <button
             onClick={() => managerKaufen(id)}

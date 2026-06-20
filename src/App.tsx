@@ -20,7 +20,15 @@ function App() {
     <div className="relative mx-auto flex min-h-full max-w-md flex-col">
       <div
         className="pointer-events-none absolute inset-0"
-        style={{ zIndex: -1, background: `radial-gradient(ellipse 100% 35% at 10% 0%, ${weltFarbe}18, transparent)` }}
+        style={{
+          zIndex: -1,
+          backgroundImage: `
+            radial-gradient(ellipse 80% 45% at 5% 0%, ${weltFarbe}22, transparent 55%),
+            radial-gradient(ellipse 60% 50% at 95% 100%, rgba(99,102,241,0.10), transparent 60%),
+            radial-gradient(circle, rgba(255,255,255,0.05) 1px, transparent 1px)
+          `,
+          backgroundSize: '100% 100%, 100% 100%, 22px 22px',
+        }}
       />
       <Header />
       <main className="flex-1 px-3 pb-20">
