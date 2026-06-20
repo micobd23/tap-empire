@@ -87,7 +87,7 @@ export const BUSINESS_MAP: Record<string, BusinessConfig> = Object.fromEntries(
 /** Ab diesem Gesamtverdienst lohnt sich der erste Prestige (gibt die ersten Investoren). */
 export const INVESTOR_BASIS = 1_000_000
 /** Skalierung der Investoren-Formel (höher = mehr Investoren). */
-export const INVESTOR_K = 10
+export const INVESTOR_K = 30
 /** Einkommens-Bonus pro Investor (0,01 = +1 %). */
 export const INVESTOR_BONUS = 0.01
 /**

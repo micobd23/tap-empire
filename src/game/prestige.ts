@@ -28,7 +28,7 @@ export function rundenSchwelle(prestigeCount: number): number {
 /** Wie viele Investoren der gesamte Lebensverdienst wert ist (Wurzel = abnehmender Ertrag). */
 export function investorenFuer(gesamtVerdient: number): number {
   if (gesamtVerdient < INVESTOR_BASIS) return 0
-  return Math.floor(INVESTOR_K * Math.sqrt(gesamtVerdient / INVESTOR_BASIS))
+  return Math.floor(INVESTOR_K * Math.pow(gesamtVerdient / INVESTOR_BASIS, 0.25))
 }
 
 /** Wie viele NEUE Investoren ein Reset gerade einbringen würde (für die Vorschau).
