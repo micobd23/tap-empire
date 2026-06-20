@@ -6,6 +6,7 @@ import { PrestigeScreen } from './features/PrestigeScreen'
 import { ErfolgeScreen } from './features/ErfolgeScreen'
 import { TabBar, type Tab } from './features/TabBar'
 import { WillkommenZurueck } from './features/WillkommenZurueck'
+import { Onboarding } from './features/Onboarding'
 
 function App() {
   useGameLoop()
@@ -21,6 +22,7 @@ function App() {
       </main>
       <TabBar tab={tab} setTab={setTab} />
       <WillkommenZurueck />
+      <Onboarding />
     </div>
   )
 }
