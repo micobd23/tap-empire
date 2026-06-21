@@ -47,6 +47,7 @@ export function multiplikatorAufschluesselung(state: GameState): {
   meisterschaft: number
   erfolge: number
   welten: number
+  event: number
   gesamt: number
 } {
   const eff = talentEffekte(state.talents)
