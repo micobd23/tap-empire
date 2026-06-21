@@ -6,7 +6,6 @@ import { Header } from './features/Header'
 import { BusinessList } from './features/BusinessList'
 import { PrestigeScreen } from './features/PrestigeScreen'
 import { ErfolgeScreen } from './features/ErfolgeScreen'
-import { StatistikenScreen } from './features/StatistikenScreen'
 import { TabBar, type Tab } from './features/TabBar'
 import { WillkommenZurueck } from './features/WillkommenZurueck'
 import { Onboarding } from './features/Onboarding'
@@ -37,7 +36,6 @@ function App() {
         {tab === 'businesses' && <BusinessList />}
         {tab === 'prestige' && <PrestigeScreen />}
         {tab === 'erfolge' && <ErfolgeScreen />}
-        {tab === 'statistiken' && <StatistikenScreen />}
       </main>
       <TabBar tab={tab} setTab={setTab} />
       <WillkommenZurueck />

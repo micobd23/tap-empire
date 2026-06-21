@@ -6,6 +6,7 @@ import {
   empfohleneNeueInvestoren,
   globalerEinkommensMultiplikator,
   kannPrestige,
+  multNachPrestige,
   naechsteAutoManagerSchwelle,
   neueInvestorenVorschau,
   prestigeLohntSich,
@@ -24,6 +25,7 @@ export function PrestigeScreen() {
   const mult = useGame((s) => globalerEinkommensMultiplikator(s.state))
   const verfTP = useGame((s) => verfuegbareTalentpunkte(s.state))
   const kann = useGame((s) => kannPrestige(s.state))
+  const multNachher = useGame((s) => multNachPrestige(s.state))
   const lohntSich = useGame((s) => prestigeLohntSich(s.state))
   const empfohlen = useGame((s) => empfohleneNeueInvestoren(s.state))
   const prestigeCount = useGame((s) => s.state.prestigeCount)
@@ -46,7 +48,7 @@ export function PrestigeScreen() {
           +{formatGeld(vorschau)} <span className="text-lg">Investoren</span>
         </p>
         <p className="mt-1 text-xs text-amber-300/70">
-          aktuell {formatGeld(investoren)} Investoren · ×{mult.toFixed(2)} Einkommen
+          aktuell {formatGeld(investoren)} Investoren · ×{mult.toFixed(2)} → ×{multNachher.toFixed(2)} Einkommen
         </p>
         <p className="mt-1 text-xs text-amber-300/60">
           Prestige-Level {prestigeCount} · {autoMgr} Auto-Manager

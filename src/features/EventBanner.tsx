@@ -3,12 +3,17 @@
 import { useEffect, useState } from 'react'
 import { useGame } from '../store'
 import { EVENT_MAP } from '../game/events'
+import { einkommenProSekundeGesamt } from '../game/prestige'
+import { formatGeld } from '../game/format'
 
 export function EventBanner() {
   const wartendesEvent = useGame((s) => s.state.wartendesEvent)
   const wartendesEventBisMs = useGame((s) => s.state.wartendesEventBisMs)
   const aktivesEvent = useGame((s) => s.state.aktivesEvent)
+  const geld = useGame((s) => s.state.geld)
+  const streikKosten = useGame((s) => Math.ceil(einkommenProSekundeGesamt(s.state) * 30))
   const eventAktivieren = useGame((s) => s.eventAktivieren)
+  const streikAbwenden = useGame((s) => s.streikAbwenden)
 
   // Sekunden-Tick für den sichtbaren Countdown (kein Re-render jede Frame).
   const [, tick] = useState(0)
@@ -36,13 +41,33 @@ export function EventBanner() {
         <div className="text-2xl leading-none">{typ.emoji}</div>
         <div className="mt-1 font-semibold text-white">{typ.name}</div>
         <div className="text-xs" style={{ color: istStreik ? '#fca5a5' : '#fcd34d' }}>{typ.beschreibung}</div>
-        <button
-          onClick={eventAktivieren}
-          className="mt-2 w-full rounded-lg py-2 text-sm font-semibold text-white active:scale-95 transition-transform"
-          style={{ background: rahmenFarbe }}
-        >
-          {istStreik ? 'Akzeptieren' : '✨ Aktivieren!'} · noch {sek}s
-        </button>
+        {istStreik ? (
+          <div className="mt-2 flex gap-2">
+            <button
+              onClick={streikAbwenden}
+              disabled={geld < streikKosten || streikKosten === 0}
+              className="flex-1 rounded-lg py-2 text-xs font-semibold text-white disabled:opacity-40 active:scale-95 transition-transform"
+              style={{ background: '#16a34a' }}
+            >
+              Abwenden{streikKosten > 0 ? ` (${formatGeld(streikKosten)} €)` : ''}
+            </button>
+            <button
+              onClick={eventAktivieren}
+              className="flex-1 rounded-lg py-2 text-xs font-semibold text-white active:scale-95 transition-transform"
+              style={{ background: rahmenFarbe }}
+            >
+              Akzeptieren · {sek}s
+            </button>
+          </div>
+        ) : (
+          <button
+            onClick={eventAktivieren}
+            className="mt-2 w-full rounded-lg py-2 text-sm font-semibold text-white active:scale-95 transition-transform"
+            style={{ background: rahmenFarbe }}
+          >
+            ✨ Aktivieren! · noch {sek}s
+          </button>
+        )}
       </div>
     )
   }

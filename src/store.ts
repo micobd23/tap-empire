@@ -32,6 +32,7 @@ interface GameStore {
   weltFreischalten: (id: string) => void
   upgradeKaufen: (id: string) => void
   eventAktivieren: () => void
+  streikAbwenden: () => void
   spielstandExportieren: () => string
   spielstandImportieren: (text: string) => boolean
   spielstandZuruecksetzen: () => void
@@ -176,6 +177,17 @@ export const useGame = create<GameStore>((set, get) => ({
       } else {
         s.state.aktivesEvent = { typId: evId, laeuftBisMs: jetzt + typ.dauerMs }
       }
+      return { state: { ...s.state } }
+    }),
+
+  streikAbwenden: () =>
+    set((s) => {
+      if (s.state.wartendesEvent !== 'managerStreik') return {}
+      const kosten = Math.ceil(einkommenProSekundeGesamt(s.state) * 30)
+      if (s.state.geld < kosten) return {}
+      s.state.geld -= kosten
+      s.state.wartendesEvent = null
+      s.state.naechstesEventMs = Date.now() + naechstesIntervall()
       return { state: { ...s.state } }
     }),
 

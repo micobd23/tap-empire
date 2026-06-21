@@ -37,3 +37,16 @@ export function formatDauer(ms: number): string {
   const rest = Math.floor(sekunden % 60)
   return `${min}:${rest.toString().padStart(2, '0')} min`
 }
+
+/** Formatiert eine Wartezeit in Sekunden als lesbare Zeichenkette, z. B. "2 min 30 s" oder "45 s". */
+export function formatWartezeit(sekunden: number): string {
+  if (sekunden <= 0) return '0 s'
+  const s = Math.ceil(sekunden)
+  if (s < 60) return `${s} s`
+  const min = Math.floor(s / 60)
+  const rest = s % 60
+  if (min < 60) return rest > 0 ? `${min} min ${rest} s` : `${min} min`
+  const std = Math.floor(min / 60)
+  const restMin = min % 60
+  return restMin > 0 ? `${std} h ${restMin} min` : `${std} h`
+}

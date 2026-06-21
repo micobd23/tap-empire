@@ -73,6 +73,15 @@ export function globalerEinkommensMultiplikator(state: GameState): number {
   return multiplikatorAufschluesselung(state).gesamt
 }
 
+/** Einkommens-Multiplikator nach einem Prestige (mit den neuen Investoren). */
+export function multNachPrestige(state: GameState): number {
+  const m = multiplikatorAufschluesselung(state)
+  const eff = talentEffekte(state.talents)
+  const neueInv = state.investoren + neueInvestorenVorschau(state)
+  const neuInvestorenFaktor = 1 + neueInv * INVESTOR_BONUS * eff.investorVerstaerkung
+  return m.gesamt / m.investoren * neuInvestorenFaktor
+}
+
 /** Lohnt sich ein Prestige schon (gibt es neue Investoren UND Runden-Schwelle erreicht)? */
 export function kannPrestige(state: GameState): boolean {
   return (

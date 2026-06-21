@@ -5,7 +5,8 @@ import { BALKEN_VOLL_AB_MS, BUSINESS_MAP, MEILENSTEINE, UPGRADES_BY_BUSINESS, WE
 import { ertragProZyklus, kostenFuer, maxKaufbar, tempoMeilensteinFaktor } from '../game/economy'
 import { globalerEinkommensMultiplikator } from '../game/prestige'
 import { talentEffekte } from '../game/talents'
-import { formatGeld } from '../game/format'
+import { formatGeld, formatWartezeit } from '../game/format'
+import { einkommenProSekundeGesamt } from '../game/prestige'
 import { soundKauf, soundMeilenstein, soundTap } from '../sound'
 import { UpgradePanel } from './UpgradePanel'
 
@@ -64,6 +65,16 @@ export function BusinessCard({ id }: { id: string }) {
   // Pro-Sekunde-Wert für die Anzeige — macht schnelle und langsame Businesses vergleichbar.
   const ertragProSekunde = ertrag / (dauer / 1000)
   const managerKosten = b.managerKosten * (1 - managerRabatt)
+
+  const eps = useGame((s) => einkommenProSekundeGesamt(s.state))
+
+  const naechsterMeilenstein = MEILENSTEINE.find((m) => m > anzahl) ?? null
+  const meilensteinBasis = naechsterMeilenstein !== null
+    ? (MEILENSTEINE[MEILENSTEINE.indexOf(naechsterMeilenstein) - 1] ?? 0)
+    : 0
+  const meilensteinProzent = naechsterMeilenstein !== null
+    ? Math.min(100, ((anzahl - meilensteinBasis) / (naechsterMeilenstein - meilensteinBasis)) * 100)
+    : 100
 
   const maxMenge = maxKaufbar(b, anzahl, geld)
   const menge = kaufModus === 'max' ? Math.max(maxMenge, 1) : kaufModus
@@ -212,13 +223,35 @@ export function BusinessCard({ id }: { id: string }) {
             )}
           </div>
           {aktiv ? (
-            <div className="whitespace-nowrap text-sm" style={{ color: weltFarbe }}>
-              +{formatGeld(ertragProSekunde)} € / s
-            </div>
+            <>
+              <div className="whitespace-nowrap text-sm" style={{ color: weltFarbe }}>
+                +{formatGeld(ertragProSekunde)} € / s
+              </div>
+              {naechsterMeilenstein !== null && (
+                <div className="mt-0.5 flex items-center gap-1.5">
+                  <div className="relative h-1 flex-1 overflow-hidden rounded-full bg-slate-700">
+                    <div
+                      className="h-full rounded-full transition-all duration-300"
+                      style={{ width: `${meilensteinProzent}%`, background: weltFarbe }}
+                    />
+                  </div>
+                  <span className="shrink-0 tabular-nums text-[10px] text-slate-500">
+                    {anzahl} / {naechsterMeilenstein}
+                  </span>
+                </div>
+              )}
+            </>
           ) : (
-            <div className="whitespace-nowrap text-sm text-slate-500">
-              ab {formatGeld(b.basisKosten)} €
-            </div>
+            <>
+              <div className="whitespace-nowrap text-sm text-slate-500">
+                ab {formatGeld(b.basisKosten)} €
+              </div>
+              {eps > 0 && geld < b.basisKosten && (
+                <div className="text-[10px] text-slate-600">
+                  ≈ {formatWartezeit((b.basisKosten - geld) / eps)}
+                </div>
+              )}
+            </>
           )}
           {aktiv && !hatManager && (
             <button
