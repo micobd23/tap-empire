@@ -123,4 +123,8 @@ export interface GameState {
   letzterPrestigeBeginnMs: number
   /** Kürzeste Prestige-Runde in ms (0 = noch kein zweites Prestige). */
   schnellstePrestigeRundeMs: number
+  /** Meta-Prestige-Ressource: Diamanten geben einen dauerhaften Einkommens-Bonus und überleben ALLES (auch Ascension). */
+  diamanten: number
+  /** Wie oft schon eine Ascension (Meta-Prestige) durchgeführt wurde. */
+  ascensionCount: number
 }

@@ -98,6 +98,12 @@ export const ERFOLGE: ErfolgConfig[] = [
   // ── Event-Erfolge ────────────────────────────────────────────────────────
   { id: 'event1',      name: '🌟 Erstmal Glück',       beschreibung: 'Erstes Glücks-Event aktiviert',      erfuellt: (s) => (s.gesamtEventsAktiviert ?? 0) >= 1 },
   { id: 'event10',     name: '🎰 Glückspilz',          beschreibung: '10 Glücks-Events aktiviert',         erfuellt: (s) => (s.gesamtEventsAktiviert ?? 0) >= 10 },
+
+  // ── Ascension & Diamanten ────────────────────────────────────────────────
+  { id: 'ascension1',  name: '💎 Aufgestiegen',        beschreibung: 'Zum ersten Mal Ascension',           erfuellt: (s) => (s.ascensionCount ?? 0) >= 1 },
+  { id: 'ascension5',  name: '✨ Wiedergeboren',        beschreibung: '5× Ascension',                       erfuellt: (s) => (s.ascensionCount ?? 0) >= 5 },
+  { id: 'diamant10',   name: '💍 Diamantsammler',      beschreibung: '10 Diamanten besitzen',              erfuellt: (s) => (s.diamanten ?? 0) >= 10 },
+  { id: 'diamant100',  name: '👑 Diamantkrone',        beschreibung: '100 Diamanten besitzen',             erfuellt: (s) => (s.diamanten ?? 0) >= 100 },
 ]
 
 /** Prüft alle Erfolge und trägt neu erreichte dauerhaft in state.erfolge ein. */

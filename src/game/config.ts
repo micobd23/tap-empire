@@ -117,6 +117,17 @@ export const AUTO_MANAGER_SCHWELLEN = [2, 5, 10, 25, 50, 100, 200, 400]
 /** Ab diesem Prestige-Level ist der Auto-Käufer verfügbar (kauft das günstigste Leistbare). */
 export const AUTO_KAUFER_AB_PRESTIGE = 3
 
+// --- Ascension (Meta-Prestige, zweite Reset-Ebene) ---
+
+/** Ab diesem Lebensverdienst ist die erste Ascension möglich (tiefes Endgame). */
+export const ASCENSION_BASIS = 1e24
+/** Skalierung der Diamanten-Formel (höher = mehr Diamanten). */
+export const ASCENSION_K = 10
+/** Wurzel-Exponent der Diamanten-Formel (kleiner = flacher = mehr Grind je Diamant). */
+export const ASCENSION_EXP = 0.2
+/** Dauerhafter Einkommens-Bonus pro Diamant (0,10 = +10 %). Überlebt ALLES, auch Ascension. */
+export const DIAMANT_BONUS = 0.1
+
 /** Rang-Titel nach Gesamtverdienst (aufsteigend; der erste gilt von Anfang an). */
 export const RAENGE: { ab: number; titel: string }[] = [
   { ab: 0,                   titel: 'Tellerwäscher' },

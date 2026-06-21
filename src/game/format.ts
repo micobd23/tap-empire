@@ -1,6 +1,10 @@
 // Große Zahlen lesbar machen: 1500 -> "1,5 Tsd.", 3_200_000 -> "3,2 Mio." usw.
 
-const EINHEITEN = ['', ' Tsd.', ' Mio.', ' Mrd.', ' Bio.', ' Brd.', ' Trill.', ' Trd.', ' Quad.', ' Quard.', ' Quint.', ' Sext.']
+const EINHEITEN = [
+  '', ' Tsd.', ' Mio.', ' Mrd.', ' Bio.', ' Brd.', ' Trill.', ' Trd.',
+  ' Quad.', ' Quard.', ' Quint.', ' Sext.', ' Sept.', ' Okt.', ' Non.',
+  ' Dez.', ' Undez.', ' Duodez.', ' Tredez.', ' Quattz.', ' Quindz.',
+]
 
 /** Formatiert einen Geldbetrag im deutschen Stil mit Tausender-Einheiten. */
 export function formatGeld(wert: number): string {
@@ -16,9 +20,9 @@ export function formatGeld(wert: number): string {
     stufe++
   }
 
-  // Sehr große Zahlen jenseits unserer Einheiten: wissenschaftliche Schreibweise.
+  // Sehr große Zahlen jenseits unserer Einheiten: kompakte Schreibweise wie "1,23e63".
   if (stufe === EINHEITEN.length - 1 && n >= 1000) {
-    return wert.toExponential(2).replace('.', ',')
+    return wert.toExponential(2).replace('.', ',').replace('e+', 'e')
   }
 
   const nachkomma = n < 10 ? 2 : n < 100 ? 1 : 0

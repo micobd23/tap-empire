@@ -35,6 +35,8 @@ export function neuerSpielstand(): GameState {
     rekordEps: 0,
     letzterPrestigeBeginnMs: Date.now(),
     schnellstePrestigeRundeMs: 0,
+    diamanten: 0,
+    ascensionCount: 0,
   }
 }
 

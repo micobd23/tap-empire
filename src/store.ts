@@ -5,7 +5,8 @@ import { exportieren, importieren, laden, neuerSpielstand, speichern } from './g
 import { applyOffline, tick } from './game/engine'
 import { BUSINESS_MAP, UPGRADE_MAP, WELT_MAP } from './game/config'
 import { kostenFuer } from './game/economy'
-import { kannPrestige, prestigeDurchfuehren, einkommenProSekundeGesamt } from './game/prestige'
+import { kannPrestige, prestigeDurchfuehren, einkommenProSekundeGesamt, weltTapErtrag } from './game/prestige'
+import { ascensionDurchfuehren, kannAscension } from './game/ascension'
 import { talentEffekte, talentKaufbar } from './game/talents'
 import { EVENT_MAP, eventEffekte, naechstesIntervall } from './game/events'
 
@@ -22,7 +23,10 @@ interface GameStore {
   kaufen: (id: string, menge: number) => void
   managerKaufen: (id: string) => void
   antippen: (id: string) => void
+  /** Imperium-Tap: gibt freies Bonus-Geld basierend auf dem Gesamteinkommen. Gibt den Ertrag zurück (0 = abgelehnt/gedeckelt). */
+  weltTippen: () => number
   prestige: () => void
+  ascension: () => void
   talentKaufen: (id: string) => void
   setKaufModus: (m: KaufModus) => void
   autoKaufUmschalten: () => void
@@ -46,6 +50,11 @@ function start(): { state: GameState; offlineVerdienst: number } {
   const offlineVerdienst = applyOffline(geladen, Date.now() - geladen.zuletztGesehen)
   return { state: geladen, offlineVerdienst }
 }
+
+// Autoclicker-Schutz: höchstens so viele gewertete Imperium-Taps pro Sekunde.
+// Verhindert, dass ein Makro das Spiel kaputt-tappt — Tappen bleibt „nie nötig".
+const MAX_TAPS_PRO_SEK = 10
+let tapZeiten: number[] = []
 
 export const useGame = create<GameStore>((set, get) => ({
   ...start(),
@@ -93,6 +102,23 @@ export const useGame = create<GameStore>((set, get) => ({
       return { state: { ...s.state } }
     }),
 
+  weltTippen: () => {
+    const jetzt = Date.now()
+    // Taps der letzten Sekunde zählen; über dem Deckel wird ignoriert (kein Ertrag, kein Klick).
+    tapZeiten = tapZeiten.filter((t) => jetzt - t < 1000)
+    if (tapZeiten.length >= MAX_TAPS_PRO_SEK) return 0
+    const ertrag = weltTapErtrag(get().state)
+    if (ertrag <= 0) return 0
+    tapZeiten.push(jetzt)
+    set((s) => {
+      s.state.geld += ertrag
+      s.state.gesamtVerdient += ertrag
+      s.state.gesamtKlicks = (s.state.gesamtKlicks ?? 0) + 1
+      return { state: { ...s.state } }
+    })
+    return ertrag
+  },
+
   prestige: () =>
     set((s) => {
       if (!kannPrestige(s.state)) return {}
@@ -105,6 +131,13 @@ export const useGame = create<GameStore>((set, get) => ({
         neuerState.schnellstePrestigeRundeMs = bisherBeste === 0 ? rundeDauerMs : Math.min(bisherBeste, rundeDauerMs)
       }
       neuerState.letzterPrestigeBeginnMs = jetzt
+      return { state: neuerState, offlineVerdienst: 0, aktiveWelt: 'welt1' }
+    }),
+
+  ascension: () =>
+    set((s) => {
+      if (!kannAscension(s.state)) return {}
+      const neuerState = ascensionDurchfuehren(s.state)
       return { state: neuerState, offlineVerdienst: 0, aktiveWelt: 'welt1' }
     }),
 

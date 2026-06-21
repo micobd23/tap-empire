@@ -3,6 +3,8 @@ import { AUTO_KAUFER_AB_PRESTIGE, BUSINESSES, WELTEN, WELT_MAP } from '../game/c
 import { useGame, type KaufModus } from '../store'
 import { formatGeld } from '../game/format'
 import { BusinessCard } from './BusinessCard'
+import { WeltTap } from './WeltTap'
+import { NaechsterTipp } from './NaechsterTipp'
 
 const MODI: KaufModus[] = [1, 10, 100, 'max']
 
@@ -27,6 +29,12 @@ export function BusinessList() {
 
   return (
     <div className="pt-3">
+      {/* Kontext-Hinweis: was lohnt sich als Nächstes? */}
+      <NaechsterTipp />
+
+      {/* Imperium-Tap: freier Bonus, bezieht sich auf die ganze aktive Welt. */}
+      <WeltTap />
+
       {/* Welt-Umschalter — erscheint, sobald es eine zweite Welt zu sehen/freizuschalten gibt. */}
       {sichtbareWelten.length > 1 && (
         <div className="mb-2 flex gap-1">

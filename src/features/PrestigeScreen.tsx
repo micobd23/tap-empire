@@ -10,12 +10,14 @@ import {
   prestigeLohntSich,
   rundenSchwelle,
   rundenVerdienst,
+  tpGewinnVorschau,
 } from '../game/prestige'
 import { verfuegbareTalentpunkte } from '../game/talents'
 import { formatGeld } from '../game/format'
 import { soundPrestige } from '../sound'
 import { TalentBaum } from './TalentBaum'
 import { SpielstandBackup } from './SpielstandBackup'
+import { AscensionCard } from './AscensionCard'
 
 export function PrestigeScreen() {
   const vorschau = useGame((s) => neueInvestorenVorschau(s.state))
@@ -29,6 +31,7 @@ export function PrestigeScreen() {
   const zuruecksetzen = useGame((s) => s.spielstandZuruecksetzen)
   const rundenErtrag = useGame((s) => rundenVerdienst(s.state))
   const schwelle = useGame((s) => rundenSchwelle(s.state.prestigeCount))
+  const tpVorschau = useGame((s) => tpGewinnVorschau(s.state))
   const [bestaetige, setBestaetige] = useState(false)
   const [resetBestaetige, setResetBestaetige] = useState(false)
   const [flash, setFlash] = useState(false)
@@ -36,6 +39,10 @@ export function PrestigeScreen() {
   return (
     <div className="pt-3">
       {flash && <div className="prestige-flash pointer-events-none fixed inset-0 z-50" />}
+
+      {/* Ascension (Meta-Prestige) — erscheint erst im tiefen Endgame. */}
+      <AscensionCard />
+
       <div className="mb-4 rounded-2xl border border-amber-700/50 bg-amber-950/30 p-4 text-center">
         <p className="text-sm text-amber-300/80">Neustart bringt dir</p>
         <p className="text-3xl font-semibold text-amber-300">
@@ -44,6 +51,11 @@ export function PrestigeScreen() {
         <p className="mt-1 text-xs text-amber-300/70">
           ×{mult.toFixed(2)} → ×{multNachher.toFixed(2)} Einkommen
         </p>
+        {kann && (
+          <p className="mt-0.5 text-xs text-emerald-300/80">
+            🌳 +{tpVorschau} Talentpunkt{tpVorschau === 1 ? '' : 'e'}
+          </p>
+        )}
 
         {/* Runden-Fortschrittsbalken — verschwindet sobald Prestige freigeschaltet ist */}
         {!kann && (

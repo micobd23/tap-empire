@@ -42,18 +42,22 @@ export function Header() {
       </div>
       <div className="gold-text mt-0.5 text-4xl font-extrabold tracking-tight">{formatGeld(state.geld)} €</div>
       <div className="text-sm text-amber-100/45">{formatGeld(proSekunde)} € / Sekunde</div>
-      {state.investoren > 0 && (
+      {auf.gesamt > 1 && (
         <div className="mt-0.5">
           <button onClick={() => setZeigeDetails((v) => !v)} className="text-xs text-amber-400">
-            {formatGeld(state.investoren)} Investoren · ×{auf.gesamt.toFixed(2)} Einkommen {zeigeDetails ? '▴' : '▾'}
+            {state.investoren > 0
+              ? `${formatGeld(state.investoren)} Investoren`
+              : `💎 ${formatGeld(state.diamanten)} Diamanten`}{' '}
+            · ×{auf.gesamt.toFixed(2)} Einkommen {zeigeDetails ? '▴' : '▾'}
           </button>
           {zeigeDetails && (
             <div className="mt-1 flex flex-wrap justify-center gap-x-3 gap-y-0.5 text-[11px] text-amber-300/80">
-              <span>Investoren ×{auf.investoren.toFixed(2)}</span>
-              <span>Talente ×{auf.talente.toFixed(2)}</span>
-              <span>Meisterschaft ×{auf.meisterschaft.toFixed(2)}</span>
-              <span>Erfolge ×{auf.erfolge.toFixed(2)}</span>
+              {auf.investoren > 1 && <span>Investoren ×{auf.investoren.toFixed(2)}</span>}
+              {auf.talente > 1 && <span>Talente ×{auf.talente.toFixed(2)}</span>}
+              {auf.meisterschaft > 1 && <span>Meisterschaft ×{auf.meisterschaft.toFixed(2)}</span>}
+              {auf.erfolge > 1 && <span>Erfolge ×{auf.erfolge.toFixed(2)}</span>}
               {auf.welten > 1 && <span>Welten ×{auf.welten.toFixed(2)}</span>}
+              {auf.diamanten > 1 && <span style={{ color: '#67e8f9' }}>💎 Diamanten ×{auf.diamanten.toFixed(2)}</span>}
             </div>
           )}
         </div>
