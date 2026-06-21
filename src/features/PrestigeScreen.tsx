@@ -18,7 +18,6 @@ import { TalentBaum } from './TalentBaum'
 import { SpielstandBackup } from './SpielstandBackup'
 
 export function PrestigeScreen() {
-  const investoren = useGame((s) => s.state.investoren)
   const vorschau = useGame((s) => neueInvestorenVorschau(s.state))
   const mult = useGame((s) => globalerEinkommensMultiplikator(s.state))
   const verfTP = useGame((s) => verfuegbareTalentpunkte(s.state))
