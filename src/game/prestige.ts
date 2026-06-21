@@ -14,6 +14,7 @@ import {
 import { talentEffekte } from './talents'
 import { gesamtEinkommenProSekunde, meisterschaftsFaktor, weltBonusFaktor } from './economy'
 import { erfolgsFaktor } from './erfolge'
+import { eventEffekte } from './events'
 
 /** Verdienst in der aktuellen Runde (seit letztem Prestige). */
 export function rundenVerdienst(state: GameState): number {
@@ -54,13 +55,15 @@ export function multiplikatorAufschluesselung(state: GameState): {
   const meisterschaft = meisterschaftsFaktor(state)
   const erfolge = erfolgsFaktor(state)
   const welten = weltBonusFaktor(state)
+  const event = eventEffekte(state).einkommenBoost
   return {
     investoren,
     talente,
     meisterschaft,
     erfolge,
     welten,
-    gesamt: investoren * talente * meisterschaft * erfolge * welten,
+    event,
+    gesamt: investoren * talente * meisterschaft * erfolge * welten * event,
   }
 }
 

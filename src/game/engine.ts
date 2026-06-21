@@ -6,20 +6,41 @@ import { bestesLeistbares, ertragProZyklus, kostenFuer, tempoMeilensteinFaktor, 
 import { globalerEinkommensMultiplikator } from './prestige'
 import { talentEffekte } from './talents'
 import { erfolgePruefen } from './erfolge'
+import { eventEffekte, naechstesIntervall, WARTE_DAUER_MS, zufaelligEventId } from './events'
 
 /** Ein Spielschritt. `deltaMs` = vergangene Zeit seit dem letzten Tick. */
 export function tick(state: GameState, deltaMs: number): void {
   const mult = globalerEinkommensMultiplikator(state)
   const zyklusFaktor = talentEffekte(state.talents).zyklusFaktor
+  const jetzt = Date.now()
+
+  // --- Event-Lifecycle ---
+  // Neues Event erscheinen lassen (nur wenn kein Event läuft/wartet)
+  if (!state.wartendesEvent && !state.aktivesEvent && jetzt >= (state.naechstesEventMs ?? 0)) {
+    state.wartendesEvent = zufaelligEventId()
+    state.wartendesEventBisMs = jetzt + WARTE_DAUER_MS
+  }
+  // Wartendes Event verfallen lassen (Spieler hat 30s verpasst)
+  if (state.wartendesEvent && jetzt >= state.wartendesEventBisMs) {
+    state.wartendesEvent = null
+    state.naechstesEventMs = jetzt + naechstesIntervall()
+  }
+  // Aktives Event beenden
+  if (state.aktivesEvent && jetzt >= state.aktivesEvent.laeuftBisMs) {
+    state.aktivesEvent = null
+    state.naechstesEventMs = jetzt + naechstesIntervall()
+  }
+
+  const evEff = eventEffekte(state)
 
   for (const b of BUSINESSES) {
     const rt = state.businesses[b.id]
     if (!rt || rt.anzahl === 0) continue
-    // Läuft nur, wenn ein Manager da ist ODER der Spieler manuell gestartet hat.
-    if (!rt.hatManager && !rt.laeuft) continue
+    // Manager-Streik: automatische Produktion ist blockiert, nur manuelles Tippen geht noch.
+    if (!rt.laeuft && (!rt.hatManager || evEff.managerGestreikt)) continue
 
     const { ertragFaktor, tempoDivisor } = upgradeEffekte(b.id, state.gekaufteUpgrades ?? [])
-    const dauer = (b.dauerMs / tempoDivisor) * zyklusFaktor * tempoMeilensteinFaktor(rt.anzahl)
+    const dauer = (b.dauerMs / tempoDivisor / evEff.tempoBoost) * zyklusFaktor * tempoMeilensteinFaktor(rt.anzahl)
     rt.fortschrittMs += deltaMs
     if (rt.fortschrittMs < dauer) continue
 

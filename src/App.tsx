@@ -9,6 +9,7 @@ import { ErfolgeScreen } from './features/ErfolgeScreen'
 import { TabBar, type Tab } from './features/TabBar'
 import { WillkommenZurueck } from './features/WillkommenZurueck'
 import { Onboarding } from './features/Onboarding'
+import { EventBanner } from './features/EventBanner'
 
 function App() {
   useGameLoop()
@@ -39,6 +40,7 @@ function App() {
       <TabBar tab={tab} setTab={setTab} />
       <WillkommenZurueck />
       <Onboarding />
+      <EventBanner />
     </div>
   )
 }

@@ -101,6 +101,14 @@ export interface GameState {
   freigeschalteteWelten: string[]
   /** Ids der bereits gekauften Business-Upgrades (dauerhaft, überleben Prestige). */
   gekaufteUpgrades: string[]
+  /** Event-id des gerade sichtbaren, noch nicht aktivierten Events (oder null). */
+  wartendesEvent: string | null
+  /** Timestamp: bis wann das wartende Event noch aktiviert werden kann. */
+  wartendesEventBisMs: number
+  /** Gerade aktives Event mit Ablauf-Timestamp (null = kein Event läuft). */
+  aktivesEvent: { typId: string; laeuftBisMs: number } | null
+  /** Timestamp: wann das nächste Event erscheinen soll. */
+  naechstesEventMs: number
   /** gesamtVerdient-Wert beim letzten Prestige (0 = noch kein Prestige). Basis für den Runden-Verdienst. */
   gesamtVerdientBeimLetztenPrestige: number
   /** Zeitstempel des letzten Speicherns — für die Offline-Berechnung. */

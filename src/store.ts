@@ -5,8 +5,9 @@ import { exportieren, importieren, laden, neuerSpielstand, speichern } from './g
 import { applyOffline, tick } from './game/engine'
 import { BUSINESS_MAP, UPGRADE_MAP, WELT_MAP } from './game/config'
 import { kostenFuer } from './game/economy'
-import { kannPrestige, prestigeDurchfuehren } from './game/prestige'
+import { kannPrestige, prestigeDurchfuehren, einkommenProSekundeGesamt } from './game/prestige'
 import { talentEffekte, talentKaufbar } from './game/talents'
+import { EVENT_MAP, eventEffekte, naechstesIntervall } from './game/events'
 
 /** Wie viele Stück ein Kauf-Klick kauft. 'max' = so viele wie leistbar. */
 export type KaufModus = 1 | 10 | 100 | 'max'
@@ -30,6 +31,7 @@ interface GameStore {
   setAktiveWelt: (id: string) => void
   weltFreischalten: (id: string) => void
   upgradeKaufen: (id: string) => void
+  eventAktivieren: () => void
   spielstandExportieren: () => string
   spielstandImportieren: (text: string) => boolean
   spielstandZuruecksetzen: () => void
@@ -61,7 +63,8 @@ export const useGame = create<GameStore>((set, get) => ({
       const rt = s.state.businesses[id]
       if (!b || !rt || menge < 1) return {} // unbekanntes/fehlendes Business → nichts tun
       if (!s.state.freigeschalteteWelten.includes(b.welt)) return {} // gesperrte Welt
-      const kosten = kostenFuer(b, rt.anzahl, menge)
+      const { kaufRabatt } = eventEffekte(s.state)
+      const kosten = kostenFuer(b, rt.anzahl, menge) * (1 - kaufRabatt)
       if (s.state.geld < kosten) return {}
       rt.anzahl += menge
       s.state.geld -= kosten
@@ -72,7 +75,8 @@ export const useGame = create<GameStore>((set, get) => ({
     set((s) => {
       const b = BUSINESS_MAP[id]
       const rt = s.state.businesses[id]
-      const kosten = b.managerKosten * (1 - talentEffekte(s.state.talents).managerRabatt)
+      const { kaufRabatt } = eventEffekte(s.state)
+      const kosten = b.managerKosten * (1 - talentEffekte(s.state.talents).managerRabatt) * (1 - kaufRabatt)
       if (rt.hatManager || s.state.geld < kosten) return {}
       s.state.geld -= kosten
       rt.hatManager = true
@@ -140,6 +144,27 @@ export const useGame = create<GameStore>((set, get) => ({
       s.state.freigeschalteteWelten = [...s.state.freigeschalteteWelten, id]
       // Direkt in die neue Welt wechseln, damit man gleich loslegen kann.
       return { state: { ...s.state }, aktiveWelt: id }
+    }),
+
+  eventAktivieren: () =>
+    set((s) => {
+      const evId = s.state.wartendesEvent
+      if (!evId) return {}
+      const typ = EVENT_MAP[evId]
+      if (!typ) return {}
+      const jetzt = Date.now()
+      s.state.wartendesEvent = null
+
+      if (typ.effekt === 'geldkoffer') {
+        // Sofortige Einmalzahlung: 5 Minuten aktuelles Einkommen
+        const bonus = einkommenProSekundeGesamt(s.state) * typ.faktor
+        s.state.geld += bonus
+        s.state.gesamtVerdient += bonus
+        s.state.naechstesEventMs = jetzt + naechstesIntervall()
+      } else {
+        s.state.aktivesEvent = { typId: evId, laeuftBisMs: jetzt + typ.dauerMs }
+      }
+      return { state: { ...s.state } }
     }),
 
   upgradeKaufen: (id) =>

@@ -1,6 +1,7 @@
 // Speichern und Laden des Spielstands im Browser (localStorage).
 import type { GameState } from './types'
 import { BUSINESSES, START_GELD } from './config'
+import { naechstesIntervall } from './events'
 
 const KEY = 'tap-empire-save-v1'
 
@@ -23,6 +24,10 @@ export function neuerSpielstand(): GameState {
     erfolgeAbgeholt: [],
     freigeschalteteWelten: ['welt1'],
     gekaufteUpgrades: [],
+    wartendesEvent: null,
+    wartendesEventBisMs: 0,
+    aktivesEvent: null,
+    naechstesEventMs: Date.now() + naechstesIntervall(),
     gesamtVerdientBeimLetztenPrestige: 0,
     zuletztGesehen: Date.now(),
   }
@@ -35,12 +40,22 @@ export function neuerSpielstand(): GameState {
  */
 function normalisieren(daten: Partial<GameState>): GameState {
   const basis = neuerSpielstand()
-  return {
+  const merged: GameState = {
     ...basis,
     ...daten,
     businesses: { ...basis.businesses, ...(daten.businesses ?? {}) },
     talents: { ...basis.talents, ...(daten.talents ?? {}) },
   }
+  // Abgelaufene Events beim Laden bereinigen, damit kein Phantom-Event aus einem alten Stand übrig bleibt.
+  const jetzt = Date.now()
+  if (merged.aktivesEvent && merged.aktivesEvent.laeuftBisMs < jetzt) {
+    merged.aktivesEvent = null
+    merged.naechstesEventMs = jetzt + naechstesIntervall()
+  }
+  if (merged.wartendesEvent && merged.wartendesEventBisMs < jetzt) {
+    merged.wartendesEvent = null
+  }
+  return merged
 }
 
 /** Lädt den Spielstand oder gibt null zurück, wenn keiner existiert. */
