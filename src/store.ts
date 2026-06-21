@@ -95,7 +95,16 @@ export const useGame = create<GameStore>((set, get) => ({
   prestige: () =>
     set((s) => {
       if (!kannPrestige(s.state)) return {}
-      return { state: prestigeDurchfuehren(s.state), offlineVerdienst: 0, aktiveWelt: 'welt1' }
+      const jetzt = Date.now()
+      const rundeDauerMs = jetzt - (s.state.letzterPrestigeBeginnMs ?? jetzt)
+      const neuerState = prestigeDurchfuehren(s.state)
+      // Schnellste Runde tracken (nur wenn schon mind. 1 Prestige davor)
+      if (s.state.prestigeCount >= 1) {
+        const bisherBeste = s.state.schnellstePrestigeRundeMs ?? 0
+        neuerState.schnellstePrestigeRundeMs = bisherBeste === 0 ? rundeDauerMs : Math.min(bisherBeste, rundeDauerMs)
+      }
+      neuerState.letzterPrestigeBeginnMs = jetzt
+      return { state: neuerState, offlineVerdienst: 0, aktiveWelt: 'welt1' }
     }),
 
   talentKaufen: (id) =>

@@ -4,7 +4,7 @@ import { useGame } from '../store'
 import { kannPrestige } from '../game/prestige'
 import { anzahlAbholbar } from '../game/erfolge'
 
-export type Tab = 'businesses' | 'prestige' | 'erfolge'
+export type Tab = 'businesses' | 'prestige' | 'erfolge' | 'statistiken'
 
 export function TabBar({ tab, setTab }: { tab: Tab; setTab: (t: Tab) => void }) {
   const kann = useGame((s) => kannPrestige(s.state))
@@ -31,6 +31,7 @@ export function TabBar({ tab, setTab }: { tab: Tab; setTab: (t: Tab) => void }) 
       {knopf('businesses', '🏪', 'bg-emerald-400')}
       {knopf('prestige', '⭐', 'bg-amber-400', kann)}
       {knopf('erfolge', '🏆', 'bg-emerald-400', erfolgPunkt)}
+      {knopf('statistiken', '📊', 'bg-sky-400')}
     </nav>
   )
 }

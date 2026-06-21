@@ -32,6 +32,9 @@ export function neuerSpielstand(): GameState {
     zuletztGesehen: Date.now(),
     gesamtKlicks: 0,
     gesamtEventsAktiviert: 0,
+    rekordEps: 0,
+    letzterPrestigeBeginnMs: Date.now(),
+    schnellstePrestigeRundeMs: 0,
   }
 }
 

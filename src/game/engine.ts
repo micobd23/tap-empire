@@ -3,7 +3,7 @@
 import type { GameState } from './types'
 import { AUTO_KAUFER_AB_PRESTIGE, BUSINESSES } from './config'
 import { bestesLeistbares, ertragProZyklus, kostenFuer, tempoMeilensteinFaktor, upgradeEffekte } from './economy'
-import { globalerEinkommensMultiplikator } from './prestige'
+import { einkommenProSekundeGesamt, globalerEinkommensMultiplikator } from './prestige'
 import { talentEffekte } from './talents'
 import { erfolgePruefen } from './erfolge'
 import { eventEffekte, naechstesIntervall, WARTE_DAUER_MS, zufaelligEventId } from './events'
@@ -69,6 +69,10 @@ export function tick(state: GameState, deltaMs: number): void {
       rt.anzahl += 1
     }
   }
+
+  // EPS-Rekord aktualisieren.
+  const aktuelleEps = einkommenProSekundeGesamt(state)
+  if (aktuelleEps > (state.rekordEps ?? 0)) state.rekordEps = aktuelleEps
 
   // Neu erreichte Erfolge dauerhaft eintragen.
   erfolgePruefen(state)

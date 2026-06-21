@@ -117,4 +117,10 @@ export interface GameState {
   gesamtKlicks: number
   /** Gesamtzahl aktivierter Glücks-Events (nie zurückgesetzt). */
   gesamtEventsAktiviert: number
+  /** Höchstes je erreichtes Einkommen pro Sekunde. */
+  rekordEps: number
+  /** Timestamp: wann die aktuelle Prestige-Runde begann (für Rundenzeit-Rekord). */
+  letzterPrestigeBeginnMs: number
+  /** Kürzeste Prestige-Runde in ms (0 = noch kein zweites Prestige). */
+  schnellstePrestigeRundeMs: number
 }
