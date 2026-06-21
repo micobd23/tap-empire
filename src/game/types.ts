@@ -113,4 +113,8 @@ export interface GameState {
   gesamtVerdientBeimLetztenPrestige: number
   /** Zeitstempel des letzten Speicherns — für die Offline-Berechnung. */
   zuletztGesehen: number
+  /** Gesamtzahl manueller Business-Tipps (nie zurückgesetzt). */
+  gesamtKlicks: number
+  /** Gesamtzahl aktivierter Glücks-Events (nie zurückgesetzt). */
+  gesamtEventsAktiviert: number
 }

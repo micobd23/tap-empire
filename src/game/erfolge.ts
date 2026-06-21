@@ -17,6 +17,10 @@ const sorten = (s: GameState) => Object.values(s.businesses).filter((rt) => rt.a
 const managerAnzahl = (s: GameState) => Object.values(s.businesses).filter((rt) => rt.hatManager).length
 const groessteAnzahl = (s: GameState) => Object.values(s.businesses).reduce((m, rt) => Math.max(m, rt.anzahl), 0)
 const talenteAnzahl = (s: GameState) => Object.values(s.talents).filter((stufe) => stufe >= 1).length
+const welt1Businesses = BUSINESSES.filter((b) => b.welt === 'welt1').map((b) => b.id)
+const welt2Businesses = BUSINESSES.filter((b) => b.welt === 'welt2').map((b) => b.id)
+const welt3Businesses = BUSINESSES.filter((b) => b.welt === 'welt3').map((b) => b.id)
+const welt4Businesses = BUSINESSES.filter((b) => b.welt === 'welt4').map((b) => b.id)
 
 /** Ist mindestens ein Talent-Ast mit allen festen Knoten komplett ausgebaut? */
 function einAstKomplett(s: GameState): boolean {
@@ -27,22 +31,73 @@ function einAstKomplett(s: GameState): boolean {
 }
 
 export const ERFOLGE: ErfolgConfig[] = [
-  { id: 'limo25',     name: '🥤 Durststrecke',      beschreibung: '25 Limonadenstände',           erfuellt: (s) => (s.businesses.limonade?.anzahl ?? 0) >= 25 },
-  { id: 'zeitung25',  name: '📰 Schlagzeilen',      beschreibung: '25 Zeitungskioske',            erfuellt: (s) => (s.businesses.zeitung?.anzahl ?? 0) >= 25 },
-  { id: 'pizza25',    name: '🍕 Franchise',         beschreibung: '25 Pizzerien',                 erfuellt: (s) => (s.businesses.pizza?.anzahl ?? 0) >= 25 },
-  { id: 'stueck100',  name: '🏭 Fließband',         beschreibung: '100 Stück bei einem Business', erfuellt: (s) => groessteAnzahl(s) >= 100 },
-  { id: 'stueck500',  name: '👑 Vollausbau',        beschreibung: '500 Stück bei einem Business', erfuellt: (s) => groessteAnzahl(s) >= 500 },
-  { id: 'stueck1k',   name: '📦 Großhändler',       beschreibung: '1.000 Stück insgesamt',        erfuellt: (s) => stueckGesamt(s) >= 1000 },
-  { id: 'geld1e6',    name: '💰 Erste Million',     beschreibung: '1 Mio. € insgesamt verdient',  erfuellt: (s) => s.gesamtVerdient >= 1_000_000 },
-  { id: 'geld1e9',    name: '💎 Milliardär',        beschreibung: '1 Mrd. € insgesamt verdient',  erfuellt: (s) => s.gesamtVerdient >= 1_000_000_000 },
-  { id: 'geld1e12',   name: '🌌 Billionär',         beschreibung: '1 Bio. € insgesamt verdient',  erfuellt: (s) => s.gesamtVerdient >= 1_000_000_000_000 },
-  { id: 'prestige1',  name: '♻️ Neuanfang',         beschreibung: 'Zum ersten Mal Prestige',      erfuellt: (s) => s.prestigeCount >= 1 },
-  { id: 'prestige10', name: '🔄 Routinier',         beschreibung: '10× Prestige',                 erfuellt: (s) => s.prestigeCount >= 10 },
-  { id: 'inv1k',      name: '🤝 Investoren-Magnet',  beschreibung: '1.000 Investoren',            erfuellt: (s) => s.investoren >= 1000 },
-  { id: 'mgrAlle',    name: '🧑‍💼 Delegierer',       beschreibung: 'Alle 8 Manager anstellen',     erfuellt: (s) => managerAnzahl(s) >= BUSINESSES.length },
-  { id: 'sortenAlle', name: '🏙️ Imperium',          beschreibung: 'Alle 8 Sorten besitzen',       erfuellt: (s) => sorten(s) >= BUSINESSES.length },
-  { id: 'astKomplett',name: '🌟 Ast-Meister',       beschreibung: 'Einen Talent-Ast komplett',    erfuellt: einAstKomplett },
-  { id: 'talente10',  name: '🏆 Talentiert',        beschreibung: '10 Talente gekauft',           erfuellt: (s) => talenteAnzahl(s) >= 10 },
+  // ── Geld-Meilensteine ────────────────────────────────────────────────────
+  { id: 'geld1e6',    name: '💰 Erste Million',      beschreibung: '1 Mio. € insgesamt verdient',   erfuellt: (s) => s.gesamtVerdient >= 1_000_000 },
+  { id: 'geld1e9',    name: '💎 Milliardär',          beschreibung: '1 Mrd. € insgesamt verdient',   erfuellt: (s) => s.gesamtVerdient >= 1_000_000_000 },
+  { id: 'geld1e12',   name: '🌌 Billionär',           beschreibung: '1 Bio. € insgesamt verdient',   erfuellt: (s) => s.gesamtVerdient >= 1_000_000_000_000 },
+  { id: 'geld1e15',   name: '🪐 Billiardär',          beschreibung: '1 Brd. € insgesamt verdient',   erfuellt: (s) => s.gesamtVerdient >= 1_000_000_000_000_000 },
+  { id: 'geld1e18',   name: '🌠 Trillionär',          beschreibung: '1 Tri. € insgesamt verdient',   erfuellt: (s) => s.gesamtVerdient >= 1_000_000_000_000_000_000 },
+  { id: 'geld1e21',   name: '🏛️ Trilliardär',         beschreibung: '1 Trd. € insgesamt verdient',   erfuellt: (s) => s.gesamtVerdient >= 1e21 },
+  { id: 'geld1e24',   name: '🌌 Quadrillionär',       beschreibung: '1 Quart. € insgesamt verdient', erfuellt: (s) => s.gesamtVerdient >= 1e24 },
+
+  // ── Welt 1 – Business-Mengen ─────────────────────────────────────────────
+  { id: 'limo25',       name: '🥤 Durststrecke',      beschreibung: '25 Limonadenstände',                 erfuellt: (s) => (s.businesses.limonade?.anzahl ?? 0) >= 25 },
+  { id: 'zeitung25',    name: '📰 Schlagzeilen',      beschreibung: '25 Zeitungskioske',                  erfuellt: (s) => (s.businesses.zeitung?.anzahl ?? 0) >= 25 },
+  { id: 'pizza25',      name: '🍕 Franchise',         beschreibung: '25 Pizzerien',                       erfuellt: (s) => (s.businesses.pizza?.anzahl ?? 0) >= 25 },
+  { id: 'waesche25',    name: '🚗 Glanz & Gloria',    beschreibung: '25 Autowäschen',                     erfuellt: (s) => (s.businesses.waesche?.anzahl ?? 0) >= 25 },
+  { id: 'donut25',      name: '🍩 Süßer Erfolg',      beschreibung: '25 Donut-Cafés',                     erfuellt: (s) => (s.businesses.donut?.anzahl ?? 0) >= 25 },
+  { id: 'fitness25',    name: '💪 Eiserner Wille',    beschreibung: '25 Fitnessstudios',                  erfuellt: (s) => (s.businesses.fitness?.anzahl ?? 0) >= 25 },
+  { id: 'bank25',       name: '🏦 Bankenkrise',       beschreibung: '25 Banken',                          erfuellt: (s) => (s.businesses.bank?.anzahl ?? 0) >= 25 },
+  { id: 'immo25',       name: '🏢 Skyline',           beschreibung: '25 Immobilien',                      erfuellt: (s) => (s.businesses.immobilien?.anzahl ?? 0) >= 25 },
+  { id: 'welt1alle50',  name: '🌍 Vollbeschäftigung', beschreibung: 'Alle Welt-1-Businesses auf 50 Stück', erfuellt: (s) => welt1Businesses.every((id) => (s.businesses[id]?.anzahl ?? 0) >= 50) },
+
+  // ── Welt 2 – Freischaltung & Ausbau ──────────────────────────────────────
+  { id: 'welt2frei',    name: '🚀 Aufbruch',          beschreibung: 'Welt 2 freigeschaltet',              erfuellt: (s) => s.freigeschalteteWelten.includes('welt2') },
+  { id: 'welt2alle25',  name: '🛸 Raumfahrer',        beschreibung: 'Alle Welt-2-Businesses auf 25 Stück', erfuellt: (s) => welt2Businesses.every((id) => (s.businesses[id]?.anzahl ?? 0) >= 25) },
+
+  // ── Welt 3 – Freischaltung & Ausbau ──────────────────────────────────────
+  { id: 'welt3frei',    name: '🌐 Weltherrscher',     beschreibung: 'Welt 3 freigeschaltet',              erfuellt: (s) => s.freigeschalteteWelten.includes('welt3') },
+  { id: 'welt3alle25',  name: '⚔️ Imperator',         beschreibung: 'Alle Welt-3-Businesses auf 25 Stück', erfuellt: (s) => welt3Businesses.every((id) => (s.businesses[id]?.anzahl ?? 0) >= 25) },
+
+  // ── Welt 4 – Freischaltung & Ausbau ──────────────────────────────────────
+  { id: 'welt4frei',    name: '🎩 Luxusleben',        beschreibung: 'Welt 4 freigeschaltet',              erfuellt: (s) => s.freigeschalteteWelten.includes('welt4') },
+  { id: 'welt4alle25',  name: '💎 Diamant-Baron',     beschreibung: 'Alle Welt-4-Businesses auf 25 Stück', erfuellt: (s) => welt4Businesses.every((id) => (s.businesses[id]?.anzahl ?? 0) >= 25) },
+
+  // ── Stückzahl-Rekorde ────────────────────────────────────────────────────
+  { id: 'stueck100',   name: '🏭 Fließband',          beschreibung: '100 Stück bei einem Business',       erfuellt: (s) => groessteAnzahl(s) >= 100 },
+  { id: 'stueck200',   name: '🔩 Massenproduktion',   beschreibung: '200 Stück bei einem Business',       erfuellt: (s) => groessteAnzahl(s) >= 200 },
+  { id: 'stueck500',   name: '👑 Vollausbau',          beschreibung: '500 Stück bei einem Business',       erfuellt: (s) => groessteAnzahl(s) >= 500 },
+  { id: 'stueck1000',  name: '🌋 Unstoppbar',          beschreibung: '1.000 Stück bei einem Business',     erfuellt: (s) => groessteAnzahl(s) >= 1000 },
+  { id: 'gesamt1k',    name: '📦 Großhändler',         beschreibung: '1.000 Stück insgesamt',              erfuellt: (s) => stueckGesamt(s) >= 1000 },
+  { id: 'gesamt5k',    name: '🏙️ Metropole',           beschreibung: '5.000 Stück insgesamt',              erfuellt: (s) => stueckGesamt(s) >= 5000 },
+  { id: 'gesamt10k',   name: '🌍 Weltkonzern',         beschreibung: '10.000 Stück insgesamt',             erfuellt: (s) => stueckGesamt(s) >= 10_000 },
+
+  // ── Prestige & Investoren ────────────────────────────────────────────────
+  { id: 'prestige1',   name: '♻️ Neuanfang',           beschreibung: 'Zum ersten Mal Prestige',            erfuellt: (s) => s.prestigeCount >= 1 },
+  { id: 'prestige5',   name: '🔁 Veteran',             beschreibung: '5× Prestige',                        erfuellt: (s) => s.prestigeCount >= 5 },
+  { id: 'prestige10',  name: '🔄 Routinier',           beschreibung: '10× Prestige',                       erfuellt: (s) => s.prestigeCount >= 10 },
+  { id: 'prestige25',  name: '🌀 Meister des Kreises', beschreibung: '25× Prestige',                       erfuellt: (s) => s.prestigeCount >= 25 },
+  { id: 'prestige50',  name: '⚡ Unaufhaltsam',        beschreibung: '50× Prestige',                       erfuellt: (s) => s.prestigeCount >= 50 },
+  { id: 'inv1k',       name: '🤝 Investoren-Magnet',   beschreibung: '1.000 Investoren',                   erfuellt: (s) => s.investoren >= 1000 },
+  { id: 'inv10k',      name: '📈 Börsengott',          beschreibung: '10.000 Investoren',                  erfuellt: (s) => s.investoren >= 10_000 },
+
+  // ── Manager & Sorten ─────────────────────────────────────────────────────
+  { id: 'mgrAlle',     name: '🧑‍💼 Delegierer',         beschreibung: 'Alle 8 Welt-1-Manager anstellen',   erfuellt: (s) => managerAnzahl(s) >= BUSINESSES.filter((b) => b.welt === 'welt1').length },
+  { id: 'sortenAlle',  name: '🏙️ Imperium',            beschreibung: 'Alle 8 Welt-1-Sorten besitzen',     erfuellt: (s) => sorten(s) >= BUSINESSES.filter((b) => b.welt === 'welt1').length },
+
+  // ── Talentbaum ───────────────────────────────────────────────────────────
+  { id: 'talente5',    name: '🌱 Lernender',           beschreibung: '5 Talente gekauft',                  erfuellt: (s) => talenteAnzahl(s) >= 5 },
+  { id: 'talente10',   name: '🏆 Talentiert',          beschreibung: '10 Talente gekauft',                 erfuellt: (s) => talenteAnzahl(s) >= 10 },
+  { id: 'astKomplett', name: '🌟 Ast-Meister',         beschreibung: 'Einen Talent-Ast komplett',          erfuellt: einAstKomplett },
+
+  // ── Klick-Rekorde ────────────────────────────────────────────────────────
+  { id: 'klick100',    name: '👆 Eifrige Finger',      beschreibung: '100 manuelle Tipps',                 erfuellt: (s) => (s.gesamtKlicks ?? 0) >= 100 },
+  { id: 'klick1k',     name: '✌️ Serientapper',        beschreibung: '1.000 manuelle Tipps',               erfuellt: (s) => (s.gesamtKlicks ?? 0) >= 1000 },
+  { id: 'klick10k',    name: '🖐️ Tipp-Legende',        beschreibung: '10.000 manuelle Tipps',              erfuellt: (s) => (s.gesamtKlicks ?? 0) >= 10_000 },
+
+  // ── Event-Erfolge ────────────────────────────────────────────────────────
+  { id: 'event1',      name: '🌟 Erstmal Glück',       beschreibung: 'Erstes Glücks-Event aktiviert',      erfuellt: (s) => (s.gesamtEventsAktiviert ?? 0) >= 1 },
+  { id: 'event10',     name: '🎰 Glückspilz',          beschreibung: '10 Glücks-Events aktiviert',         erfuellt: (s) => (s.gesamtEventsAktiviert ?? 0) >= 10 },
 ]
 
 /** Prüft alle Erfolge und trägt neu erreichte dauerhaft in state.erfolge ein. */

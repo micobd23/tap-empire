@@ -88,6 +88,7 @@ export const useGame = create<GameStore>((set, get) => ({
       const rt = s.state.businesses[id]
       if (rt.anzahl === 0 || rt.hatManager || rt.laeuft) return {}
       rt.laeuft = true
+      s.state.gesamtKlicks = (s.state.gesamtKlicks ?? 0) + 1
       return { state: { ...s.state } }
     }),
 
@@ -154,6 +155,8 @@ export const useGame = create<GameStore>((set, get) => ({
       if (!typ) return {}
       const jetzt = Date.now()
       s.state.wartendesEvent = null
+
+      s.state.gesamtEventsAktiviert = (s.state.gesamtEventsAktiviert ?? 0) + 1
 
       if (typ.effekt === 'geldkoffer') {
         // Sofortige Einmalzahlung: 5 Minuten aktuelles Einkommen
