@@ -2,12 +2,10 @@
 import { useState } from 'react'
 import { useGame } from '../store'
 import {
-  autoManagerAnzahl,
   empfohleneNeueInvestoren,
   globalerEinkommensMultiplikator,
   kannPrestige,
   multNachPrestige,
-  naechsteAutoManagerSchwelle,
   neueInvestorenVorschau,
   prestigeLohntSich,
   rundenSchwelle,
@@ -28,9 +26,6 @@ export function PrestigeScreen() {
   const multNachher = useGame((s) => multNachPrestige(s.state))
   const lohntSich = useGame((s) => prestigeLohntSich(s.state))
   const empfohlen = useGame((s) => empfohleneNeueInvestoren(s.state))
-  const prestigeCount = useGame((s) => s.state.prestigeCount)
-  const autoMgr = useGame((s) => autoManagerAnzahl(s.state.prestigeCount))
-  const naechste = useGame((s) => naechsteAutoManagerSchwelle(s.state.prestigeCount))
   const prestige = useGame((s) => s.prestige)
   const zuruecksetzen = useGame((s) => s.spielstandZuruecksetzen)
   const rundenErtrag = useGame((s) => rundenVerdienst(s.state))
@@ -48,11 +43,7 @@ export function PrestigeScreen() {
           +{formatGeld(vorschau)} <span className="text-lg">Investoren</span>
         </p>
         <p className="mt-1 text-xs text-amber-300/70">
-          aktuell {formatGeld(investoren)} Investoren · ×{mult.toFixed(2)} → ×{multNachher.toFixed(2)} Einkommen
-        </p>
-        <p className="mt-1 text-xs text-amber-300/60">
-          Prestige-Level {prestigeCount} · {autoMgr} Auto-Manager
-          {naechste !== null && ` · nächster bei Level ${naechste}`}
+          ×{mult.toFixed(2)} → ×{multNachher.toFixed(2)} Einkommen
         </p>
 
         {/* Runden-Fortschrittsbalken — verschwindet sobald Prestige freigeschaltet ist */}

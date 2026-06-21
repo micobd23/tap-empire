@@ -49,6 +49,43 @@ export function ErfolgeScreen() {
         )}
       </div>
 
+      {/* Statistiken-Toggle direkt unter der Zusammenfassung */}
+      <div className="mb-4 border-t border-slate-700/50 pt-3">
+        <button
+          onClick={() => setStatsOffen((o) => !o)}
+          className="flex w-full items-center justify-between px-1 py-1 text-sm text-slate-400"
+        >
+          <span>📊 Statistiken</span>
+          <span>{statsOffen ? '▲' : '▼'}</span>
+        </button>
+        {statsOffen && (
+          <div className="mt-2 flex flex-col gap-1.5">
+            {([
+              ['Gesamt verdient', formatGeld(state.gesamtVerdient) + ' €'],
+              ['Rekord EPS', formatGeld(state.rekordEps ?? 0) + ' €/s'],
+              ['Lieblings-Business', (() => {
+                const b = BUSINESSES.reduce<typeof BUSINESSES[0] | null>((best, b) =>
+                  !best || (state.businesses[b.id]?.anzahl ?? 0) > (state.businesses[best.id]?.anzahl ?? 0) ? b : best, null)
+                return b ? `${b.emoji} ${b.name}` : '—'
+              })()],
+              ['Stück insgesamt', Object.values(state.businesses).reduce((s, rt) => s + rt.anzahl, 0).toLocaleString('de-DE')],
+              ['Manager angestellt', `${Object.values(state.businesses).filter((rt) => rt.hatManager).length}`],
+              ['Prestige-Anzahl', `${state.prestigeCount}×`],
+              ['Investoren gesamt', state.investoren.toLocaleString('de-DE')],
+              ['Schnellste Runde', formatZeit(state.schnellstePrestigeRundeMs ?? 0)],
+              ['Manuelle Tipps', (state.gesamtKlicks ?? 0).toLocaleString('de-DE')],
+              ['Events aktiviert', `${state.gesamtEventsAktiviert ?? 0}`],
+              ['Welten freigeschaltet', `${state.freigeschalteteWelten.length} / 4`],
+            ] as [string, string][]).map(([label, wert]) => (
+              <div key={label} className="flex items-center justify-between gap-2 rounded-xl border border-slate-700 bg-slate-800/60 px-4 py-2">
+                <span className="text-sm text-slate-300">{label}</span>
+                <span className="font-semibold text-white">{wert}</span>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+
       <div className="flex flex-col gap-2">
         {ERFOLGE.map((e) => {
           const erreicht = erfolge.includes(e.id)
@@ -88,42 +125,6 @@ export function ErfolgeScreen() {
         })}
       </div>
 
-      {/* Statistiken-Abschnitt */}
-      <div className="mt-4 border-t border-slate-700/50 pt-3">
-        <button
-          onClick={() => setStatsOffen((o) => !o)}
-          className="flex w-full items-center justify-between px-1 py-1 text-sm text-slate-400"
-        >
-          <span>📊 Statistiken</span>
-          <span>{statsOffen ? '▲' : '▼'}</span>
-        </button>
-        {statsOffen && (
-          <div className="mt-2 flex flex-col gap-1.5">
-            {([
-              ['Gesamt verdient', formatGeld(state.gesamtVerdient) + ' €'],
-              ['Rekord EPS', formatGeld(state.rekordEps ?? 0) + ' €/s'],
-              ['Lieblings-Business', (() => {
-                const b = BUSINESSES.reduce<typeof BUSINESSES[0] | null>((best, b) =>
-                  !best || (state.businesses[b.id]?.anzahl ?? 0) > (state.businesses[best.id]?.anzahl ?? 0) ? b : best, null)
-                return b ? `${b.emoji} ${b.name}` : '—'
-              })()],
-              ['Stück insgesamt', Object.values(state.businesses).reduce((s, rt) => s + rt.anzahl, 0).toLocaleString('de-DE')],
-              ['Manager angestellt', `${Object.values(state.businesses).filter((rt) => rt.hatManager).length}`],
-              ['Prestige-Anzahl', `${state.prestigeCount}×`],
-              ['Investoren gesamt', state.investoren.toLocaleString('de-DE')],
-              ['Schnellste Runde', formatZeit(state.schnellstePrestigeRundeMs ?? 0)],
-              ['Manuelle Tipps', (state.gesamtKlicks ?? 0).toLocaleString('de-DE')],
-              ['Events aktiviert', `${state.gesamtEventsAktiviert ?? 0}`],
-              ['Welten freigeschaltet', `${state.freigeschalteteWelten.length} / 4`],
-            ] as [string, string][]).map(([label, wert]) => (
-              <div key={label} className="flex items-center justify-between gap-2 rounded-xl border border-slate-700 bg-slate-800/60 px-4 py-2">
-                <span className="text-sm text-slate-300">{label}</span>
-                <span className="font-semibold text-white">{wert}</span>
-              </div>
-            ))}
-          </div>
-        )}
-      </div>
     </div>
   )
 }
