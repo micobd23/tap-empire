@@ -1,7 +1,33 @@
 @import 'tailwindcss';
 
+/*
+ * ZENTRALE FARB-PALETTE (Warm-Theme „Gold-Glow")
+ * --------------------------------------------------
+ * Tailwind nutzt überall slate-* als Neutralfarben. Hier definieren wir diese
+ * Skala auf warme Pflaume/Espresso-Töne um — dadurch werden ALLE Flächen
+ * (Header, Karten, Knöpfe, Leiste) automatisch warm, ohne jede Datei zu ändern.
+ * Wenn dir der Grundton zu dunkel/hell ist: einfach hier die Werte anpassen.
+ */
+@theme {
+  --color-slate-50: #faf5fb;
+  --color-slate-100: #f3ecf5;
+  --color-slate-200: #e7dceb;
+  --color-slate-300: #cdbcd2;
+  --color-slate-400: #a892ad;
+  --color-slate-500: #7d6685;
+  --color-slate-600: #574061;
+  --color-slate-700: #3b2745;
+  --color-slate-800: #2b1a33;
+  --color-slate-900: #1f1226;
+  --color-slate-950: #150a1a;
+}
+
 :root {
   color-scheme: dark;
+  /* Leitfarben des Themes — frei verwendbar in Komponenten via var(--gold) usw. */
+  --gold: #fbbf24;
+  --gold-hell: #fde68a;
+  --gold-tief: #b45309;
 }
 
 html,
@@ -12,8 +38,14 @@ body,
 
 body {
   margin: 0;
-  background: #111827;
-  color: #e2e8f0;
+  /* Warmer Hintergrund: tiefe Pflaume mit Gold- & Magenta-Schimmer in den Ecken. */
+  background-color: #160c1c;
+  background-image:
+    radial-gradient(120% 80% at 0% 0%, rgba(245, 158, 11, 0.18), transparent 55%),
+    radial-gradient(100% 70% at 100% 100%, rgba(217, 70, 160, 0.12), transparent 55%),
+    linear-gradient(160deg, #25132f 0%, #1a0f22 55%, #150b1b 100%);
+  background-attachment: fixed;
+  color: #f3ecf5;
   font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
   /* Spiel-Gefühl: kein Überscrollen, keine Tipp-Markierung, keine Textauswahl */
   overscroll-behavior: none;
@@ -22,93 +54,165 @@ body {
   -webkit-user-select: none;
 }
 
-/* Fliegende "+X"-Zahl beim Antippen eines Business */
+/* Wiederverwendbarer goldener Text-Glanz (Geldbeträge, Überschriften). */
+.gold-text {
+  background: linear-gradient(180deg, var(--gold-hell), var(--gold));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  text-shadow: 0 2px 16px rgba(245, 158, 11, 0.35);
+}
+
+/* Fliegende "+X"-Zahl beim Antippen eines Business — jetzt größer & mit Pop. */
 @keyframes float-up {
-  from {
-    transform: translate(-50%, 0);
+  0% {
+    transform: translate(-50%, 0) scale(0.7);
+    opacity: 0;
+  }
+  20% {
+    transform: translate(-50%, -6px) scale(1.15);
     opacity: 1;
   }
-  to {
-    transform: translate(-50%, -42px);
+  100% {
+    transform: translate(-50%, -52px) scale(1);
     opacity: 0;
   }
 }
 .float-zahl {
-  animation: float-up 0.9s ease-out forwards;
+  animation: float-up 0.95s ease-out forwards;
+  text-shadow: 0 0 10px rgba(110, 231, 183, 0.6);
 }
 
 /* Münzen spritzen beim Antippen in zufällige Richtungen weg (--dx/--dy je Münze gesetzt) */
 @keyframes muenze-weg {
   from {
-    transform: translate(0, 0) scale(1);
+    transform: translate(0, 0) scale(1) rotate(0deg);
     opacity: 1;
   }
   to {
-    transform: translate(var(--dx), var(--dy)) scale(0.4);
+    transform: translate(var(--dx), var(--dy)) scale(0.4) rotate(220deg);
     opacity: 0;
   }
 }
 .muenze {
-  animation: muenze-weg 0.7s ease-out forwards;
+  animation: muenze-weg 0.75s ease-out forwards;
+  filter: drop-shadow(0 0 6px rgba(251, 191, 36, 0.7));
 }
 
-/* Kurzer "Pop" des Business-Emojis bei jedem Tipp */
+/* Kurzer "Pop" des Business-Emojis bei jedem Tipp — kräftiger als zuvor. */
 @keyframes tap-pop {
   0% {
-    transform: scale(1);
+    transform: scale(1) rotate(0deg);
   }
-  40% {
-    transform: scale(1.35);
+  35% {
+    transform: scale(1.45) rotate(-6deg);
+  }
+  70% {
+    transform: scale(0.92) rotate(4deg);
   }
   100% {
-    transform: scale(1);
+    transform: scale(1) rotate(0deg);
   }
 }
 .tap-pop {
-  animation: tap-pop 0.25s ease-out;
+  animation: tap-pop 0.3s ease-out;
 }
 
-/* Goldenes Aufblitzen der Karte beim Erreichen eines Meilensteins */
+/* Glanz-Streifen, der über kaufbare Knöpfe wandert (Splash auf Kaufen-Button). */
+@keyframes shimmer {
+  0% {
+    transform: translateX(-150%) skewX(-20deg);
+  }
+  100% {
+    transform: translateX(250%) skewX(-20deg);
+  }
+}
+.shimmer::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 60%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.45),
+    transparent
+  );
+  animation: shimmer 2.2s ease-in-out infinite;
+  pointer-events: none;
+}
+
+/* Sanftes Pulsieren/Leuchten für „verfügbar"-Hinweise (Upgrades, freischaltbare Welten). */
+@keyframes glow-pulse {
+  0%,
+  100% {
+    filter: drop-shadow(0 0 2px currentColor);
+    opacity: 0.85;
+  }
+  50% {
+    filter: drop-shadow(0 0 9px currentColor);
+    opacity: 1;
+  }
+}
+.glow-pulse {
+  animation: glow-pulse 1.4s ease-in-out infinite;
+}
+
+/* Goldenes Aufblitzen der Karte beim Erreichen eines Meilensteins — wärmer & stärker. */
 @keyframes meilenstein-blitz {
   0% {
     box-shadow: 0 0 0 0 rgba(251, 191, 36, 0);
-    border-color: rgb(51 65 85);
   }
   30% {
-    box-shadow: 0 0 20px 4px rgba(251, 191, 36, 0.7);
-    border-color: rgb(251 191 36);
+    box-shadow: 0 0 26px 6px rgba(251, 191, 36, 0.8),
+      inset 0 0 22px rgba(251, 191, 36, 0.35);
   }
   100% {
     box-shadow: 0 0 0 0 rgba(251, 191, 36, 0);
-    border-color: rgb(51 65 85);
   }
 }
 .meilenstein-blitz {
-  animation: meilenstein-blitz 0.6s ease-out;
+  animation: meilenstein-blitz 0.7s ease-out;
 }
 
 /* Glücks-Event-Banner: fährt von unten ein */
 @keyframes slide-up {
-  from { transform: translateY(110%); opacity: 0; }
-  to   { transform: translateY(0);    opacity: 1; }
+  from {
+    transform: translateY(110%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
 }
 .event-slide-up {
   animation: slide-up 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
-/* Vollbild-Aufblitzen beim Prestige */
+/* Vollbild-Aufblitzen beim Prestige — goldene Explosion. */
 @keyframes prestige-flash {
   0% {
     opacity: 0;
+    transform: scale(0.6);
   }
   20% {
-    opacity: 0.85;
+    opacity: 0.95;
+    transform: scale(1);
   }
   100% {
     opacity: 0;
+    transform: scale(1.6);
   }
 }
 .prestige-flash {
-  background: radial-gradient(circle, rgba(251, 191, 36, 0.9), rgba(251, 191, 36, 0));
-  animation: prestige-flash 0.7s ease-out forwards;
+  background: radial-gradient(
+    circle,
+    rgba(253, 230, 138, 0.95),
+    rgba(251, 191, 36, 0.5) 35%,
+    rgba(245, 158, 11, 0)
+  );
+  animation: prestige-flash 0.8s ease-out forwards;
 }

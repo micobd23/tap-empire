@@ -14,9 +14,10 @@ export function TabBar({ tab, setTab }: { tab: Tab; setTab: (t: Tab) => void }) 
     <button
       onClick={() => setTab(ziel)}
       aria-label={ziel}
-      className={`relative flex-1 py-3 text-center text-2xl transition-opacity ${
-        tab === ziel ? 'opacity-100' : 'opacity-40'
+      className={`relative flex-1 py-3 text-center text-2xl transition-all ${
+        tab === ziel ? 'scale-110 opacity-100' : 'opacity-40'
       }`}
+      style={tab === ziel ? { filter: 'drop-shadow(0 0 8px rgba(251,191,36,0.55))' } : undefined}
     >
       {tab === ziel && <span className={`absolute inset-x-0 top-0 mx-auto h-0.5 w-8 rounded-full ${balken}`} />}
       <span className="relative inline-block">

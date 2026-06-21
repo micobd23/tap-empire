@@ -39,7 +39,7 @@ export function BusinessList() {
                   className={`flex-1 rounded-lg py-1.5 text-sm font-medium ${
                     aktiveWelt === w.id ? 'text-white' : 'bg-slate-800 text-slate-400'
                   }`}
-                  style={aktiveWelt === w.id ? { background: WELT_MAP[w.id].farbe } : undefined}
+                  style={aktiveWelt === w.id ? { background: `linear-gradient(180deg, ${WELT_MAP[w.id].farbeTint}, ${WELT_MAP[w.id].farbe})`, color: '#1a0f22', boxShadow: `0 3px 12px ${WELT_MAP[w.id].farbe}55` } : undefined}
                 >
                   {w.emoji} {w.name}
                 </button>
@@ -54,8 +54,9 @@ export function BusinessList() {
                 disabled={!leistbar}
                 title={`${w.emoji} ${w.name} freischalten (+${Math.round(w.bonus * 100)} % Einkommen)`}
                 className={`flex-1 rounded-lg py-1.5 text-xs font-medium ${
-                  leistbar ? 'animate-pulse bg-amber-600 text-white' : 'bg-slate-800 text-slate-500'
+                  leistbar ? 'glow-pulse text-white' : 'bg-slate-800 text-slate-500'
                 }`}
+                style={leistbar ? { background: 'linear-gradient(180deg, #fde68a, #f59e0b)', color: '#3a2705', boxShadow: '0 3px 12px rgba(245,158,11,0.5)' } : undefined}
               >
                 🔒 {w.emoji} {formatGeld(w.freischaltKosten)} €
               </button>

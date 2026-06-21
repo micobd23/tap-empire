@@ -29,12 +29,19 @@ export function Header() {
       >
         {tonAn ? '🔊' : '🔇'}
       </button>
-      <div style={{ fontSize: '11px', fontWeight: 700, letterSpacing: '0.18em', color: weltFarbe, opacity: 0.6, fontFamily: 'monospace' }}>
+      <div style={{ fontSize: '11px', fontWeight: 800, letterSpacing: '0.22em', color: weltFarbe, opacity: 0.7, fontFamily: 'monospace' }}>
         TAP EMPIRE
       </div>
-      <div className="text-xs font-medium text-amber-300/90">🏅 {rang.titel}</div>
-      <div className="text-3xl font-semibold" style={{ color: weltFarbe }}>{formatGeld(state.geld)} €</div>
-      <div className="text-sm text-slate-400">{formatGeld(proSekunde)} € / Sekunde</div>
+      <div className="mt-0.5">
+        <span
+          className="inline-block rounded-full px-2.5 py-0.5 text-[11px] font-semibold text-amber-200"
+          style={{ background: 'rgba(245,158,11,0.16)', boxShadow: 'inset 0 0 0 1px rgba(253,230,138,0.25)' }}
+        >
+          🏅 {rang.titel}
+        </span>
+      </div>
+      <div className="gold-text mt-0.5 text-4xl font-extrabold tracking-tight">{formatGeld(state.geld)} €</div>
+      <div className="text-sm text-amber-100/45">{formatGeld(proSekunde)} € / Sekunde</div>
       {state.investoren > 0 && (
         <div className="mt-0.5">
           <button onClick={() => setZeigeDetails((v) => !v)} className="text-xs text-amber-400">

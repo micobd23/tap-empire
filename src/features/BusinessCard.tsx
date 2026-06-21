@@ -153,8 +153,15 @@ export function BusinessCard({ id }: { id: string }) {
     <div
       className={`relative mb-2 ${aktiv ? 'rounded-r-xl' : 'rounded-xl'} ${blitz ? 'meilenstein-blitz' : ''}`}
       style={aktiv
-        ? { background: '#1d2d44', border: '1px solid #2d3f5a', borderLeft: `5px solid ${weltFarbe}` }
-        : { background: '#151e2e', border: `1.5px dashed ${weltFarbe}66` }
+        ? {
+            background: `linear-gradient(135deg, ${weltFarbe}26, rgba(255,255,255,0.03))`,
+            borderTop: '1px solid rgba(255,255,255,0.06)',
+            borderRight: '1px solid rgba(255,255,255,0.04)',
+            borderBottom: '1px solid rgba(0,0,0,0.25)',
+            borderLeft: `5px solid ${weltFarbe}`,
+            boxShadow: `0 6px 18px rgba(0,0,0,0.32), inset 0 0 0 1px rgba(255,255,255,0.04)`,
+          }
+        : { background: 'rgba(20,11,26,0.55)', border: `1.5px dashed ${weltFarbe}55` }
       }
     >
       {floats.map((f) => (
@@ -182,8 +189,11 @@ export function BusinessCard({ id }: { id: string }) {
           aria-label={`${b.name} produzieren`}
           className="relative flex h-16 w-16 shrink-0 items-center justify-center overflow-hidden rounded-lg text-3xl transition-transform active:scale-90 disabled:active:scale-100"
           style={aktiv
-            ? { background: `${weltFarbe}18`, border: `1px solid ${weltFarbe}35` }
-            : { background: '#0d1424', filter: 'grayscale(1) opacity(0.45)' }
+            ? {
+                background: `radial-gradient(circle at 30% 25%, ${weltFarbe}55, ${weltFarbe}14)`,
+                boxShadow: `inset 0 0 0 1px ${weltFarbe}55, 0 0 16px ${weltFarbe}30`,
+              }
+            : { background: 'rgba(13,7,18,0.6)', filter: 'grayscale(1) opacity(0.45)' }
           }
         >
           <span key={popKey} className={`relative z-10 ${popKey > 0 ? 'tap-pop' : ''}`}>
@@ -199,7 +209,7 @@ export function BusinessCard({ id }: { id: string }) {
           )}
           <div
             className="absolute bottom-0 left-0 h-2"
-            style={{ width: `${prozent}%`, background: weltFarbe }}
+            style={{ width: `${prozent}%`, background: weltFarbe, boxShadow: `0 0 8px ${weltFarbe}` }}
           />
         </button>
 
@@ -217,16 +227,28 @@ export function BusinessCard({ id }: { id: string }) {
               </div>
               {naechsterMeilenstein !== null && (
                 <div className="mt-0.5 flex items-center gap-1.5">
-                  <div className="relative h-1 flex-1 overflow-hidden rounded-full bg-slate-700">
+                  <div className="relative h-1.5 flex-1 overflow-hidden rounded-full bg-black/30">
                     <div
                       className="h-full rounded-full transition-all duration-300"
-                      style={{ width: `${meilensteinProzent}%`, background: weltFarbe }}
+                      style={{ width: `${meilensteinProzent}%`, background: `linear-gradient(90deg, ${weltFarbe}, ${weltTint})`, boxShadow: `0 0 6px ${weltFarbe}aa` }}
                     />
                   </div>
                   <span className="shrink-0 tabular-nums text-[10px] text-slate-500">
                     {anzahl} / {naechsterMeilenstein}
                   </span>
                 </div>
+              )}
+              {!hatManager ? (
+                <button
+                  onClick={() => managerKaufen(id)}
+                  disabled={geld < managerKosten}
+                  className="mt-1 inline-block whitespace-nowrap rounded px-1.5 py-0.5 text-[11px] font-medium text-amber-100 disabled:opacity-40"
+                  style={{ background: 'rgba(245,158,11,0.18)', boxShadow: 'inset 0 0 0 1px rgba(253,230,138,0.22)' }}
+                >
+                  👔 Manager: {formatGeld(managerKosten)} €
+                </button>
+              ) : (
+                <div className="mt-1 text-[11px] text-amber-400">👔 Manager aktiv ✓</div>
               )}
             </>
           ) : (
@@ -241,16 +263,6 @@ export function BusinessCard({ id }: { id: string }) {
               )}
             </>
           )}
-          {aktiv && !hatManager && (
-            <button
-              onClick={() => managerKaufen(id)}
-              disabled={geld < managerKosten}
-              className="mt-1 whitespace-nowrap rounded-md bg-slate-700 px-2 py-0.5 text-xs text-slate-200 disabled:opacity-40"
-            >
-              Manager: {formatGeld(managerKosten)} €
-            </button>
-          )}
-          {hatManager && <div className="mt-1 text-xs text-amber-400">Manager aktiv ✓</div>}
         </div>
 
         <button
@@ -262,8 +274,8 @@ export function BusinessCard({ id }: { id: string }) {
           onPointerCancel={haltStop}
           onContextMenu={(e) => e.preventDefault()}
           disabled={!kannKaufen}
-          className="w-28 shrink-0 touch-none select-none rounded-lg px-2 py-2 text-center font-medium text-white transition-transform active:scale-95 disabled:bg-slate-700 disabled:text-slate-500 disabled:active:scale-100"
-          style={kannKaufen ? { background: weltFarbe } : undefined}
+          className={`relative w-24 shrink-0 touch-none select-none overflow-hidden rounded-xl px-2 py-2 text-center font-bold transition-transform active:scale-95 disabled:bg-slate-700 disabled:text-slate-500 disabled:shadow-none disabled:active:scale-100 ${kannKaufen ? 'shimmer' : ''}`}
+          style={kannKaufen ? { background: `linear-gradient(180deg, ${weltTint}, ${weltFarbe})`, boxShadow: `0 4px 14px ${weltFarbe}66`, color: '#1a0f22' } : undefined}
         >
           <div className="text-xs opacity-80">Kaufen ×{menge}</div>
           <div className="truncate text-sm">{formatGeld(kosten)} €</div>
@@ -296,7 +308,7 @@ export function BusinessCard({ id }: { id: string }) {
             })}
           </div>
           {kannUpgradeKaufen && (
-            <span className="ml-auto text-[10px] font-semibold animate-pulse" style={{ color: weltFarbe }}>
+            <span className="glow-pulse ml-auto text-[10px] font-semibold" style={{ color: weltFarbe }}>
               verfügbar
             </span>
           )}

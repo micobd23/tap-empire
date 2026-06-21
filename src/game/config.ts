@@ -34,10 +34,10 @@ export const PRESTIGE_RUNDEN_FAKTOR = 5
  * Freischalt-Preise und Boni hier zentral tunen.
  */
 export const WELTEN: WeltConfig[] = [
-  { id: 'welt1', name: 'Klassik',  emoji: '🌍', freischaltKosten: 0,                        bonus: 0,    farbe: '#22c55e', farbeTint: '#86efac' },
-  { id: 'welt2', name: 'Zukunft',  emoji: '🚀', freischaltKosten: 800_000_000_000,             bonus: 0.5,  farbe: '#06b6d4', farbeTint: '#67e8f9' },
-  { id: 'welt3', name: 'Imperium', emoji: '🌐', freischaltKosten: 250_000_000_000_000_000_000, bonus: 0.75, farbe: '#a855f7', farbeTint: '#d8b4fe' },
-  { id: 'welt4', name: 'Luxus',    emoji: '🎩', freischaltKosten: 100_000_000_000_000_000_000_000_000_000, bonus: 1.0, farbe: '#f59e0b', farbeTint: '#fcd34d' },
+  { id: 'welt1', name: 'Klassik',  emoji: '🌍', freischaltKosten: 0,                        bonus: 0,    farbe: '#34d399', farbeTint: '#a7f3d0' },
+  { id: 'welt2', name: 'Zukunft',  emoji: '🚀', freischaltKosten: 800_000_000_000,             bonus: 0.5,  farbe: '#22d3ee', farbeTint: '#a5f3fc' },
+  { id: 'welt3', name: 'Imperium', emoji: '🌐', freischaltKosten: 250_000_000_000_000_000_000, bonus: 0.75, farbe: '#e879f9', farbeTint: '#f5d0fe' },
+  { id: 'welt4', name: 'Luxus',    emoji: '🎩', freischaltKosten: 100_000_000_000_000_000_000_000_000_000, bonus: 1.0, farbe: '#fbbf24', farbeTint: '#fde68a' },
 ]
 
 /** Schneller Zugriff auf eine Welt über die id. */
