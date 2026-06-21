@@ -144,7 +144,10 @@ export function BusinessCard({ id }: { id: string }) {
 
   const alleUpgrades = UPGRADES_BY_BUSINESS[id] ?? []
   const anzahlGekauft = alleUpgrades.filter((u) => gekaufteUpgrades.includes(u.id)).length
-  const hatNochOffene = aktiv && anzahlGekauft < alleUpgrades.length
+  const alleGekauft = alleUpgrades.length > 0 && anzahlGekauft === alleUpgrades.length
+  const kannUpgradeKaufen = aktiv && alleUpgrades.some(
+    (u) => !gekaufteUpgrades.includes(u.id) && geld >= u.kosten
+  )
 
   return (
     <div
@@ -206,21 +209,6 @@ export function BusinessCard({ id }: { id: string }) {
               className={`truncate font-medium ${aktiv ? '' : 'text-slate-400'}`}
               style={aktiv ? { color: weltTint } : undefined}
             >{b.name}</span>
-            {aktiv && (
-              <button
-                onClick={() => setUpgradeOffen((o) => !o)}
-                aria-label="Upgrades anzeigen"
-                className="relative shrink-0 rounded px-1 text-sm leading-none text-slate-400 transition-colors hover:text-slate-200"
-              >
-                🔧
-                {hatNochOffene && anzahlGekauft < alleUpgrades.length && (
-                  <span
-                    className="absolute -right-0.5 -top-0.5 h-2 w-2 rounded-full"
-                    style={{ background: weltFarbe }}
-                  />
-                )}
-              </button>
-            )}
           </div>
           {aktiv ? (
             <>
@@ -281,6 +269,43 @@ export function BusinessCard({ id }: { id: string }) {
           <div className="truncate text-sm">{formatGeld(kosten)} €</div>
         </button>
       </div>
+
+      {/* Upgrade-Streifen — immer sichtbar auf aktiven Karten mit Upgrades */}
+      {aktiv && alleUpgrades.length > 0 && (
+        <button
+          onClick={() => setUpgradeOffen((o) => !o)}
+          className="flex w-full items-center gap-2 border-t px-3 py-1.5 text-left transition-colors"
+          style={{
+            borderColor: alleGekauft ? '#1e293b' : `${weltFarbe}30`,
+            background: upgradeOffen ? `${weltFarbe}10` : 'transparent',
+          }}
+        >
+          <span className="text-[11px] font-medium" style={{ color: alleGekauft ? '#475569' : kannUpgradeKaufen ? weltFarbe : '#64748b' }}>
+            ⬆ Upgrades
+          </span>
+          <div className="flex gap-1">
+            {alleUpgrades.map((u) => {
+              const gekauft = gekaufteUpgrades.includes(u.id)
+              return (
+                <span
+                  key={u.id}
+                  className="h-2 w-2 rounded-full"
+                  style={{ background: gekauft ? weltFarbe : '#334155' }}
+                />
+              )
+            })}
+          </div>
+          {kannUpgradeKaufen && (
+            <span className="ml-auto text-[10px] font-semibold animate-pulse" style={{ color: weltFarbe }}>
+              verfügbar
+            </span>
+          )}
+          {alleGekauft && (
+            <span className="ml-auto text-[10px] text-slate-600">✓ fertig</span>
+          )}
+          <span className="shrink-0 text-[10px] text-slate-600">{upgradeOffen ? '▲' : '▼'}</span>
+        </button>
+      )}
 
       {upgradeOffen && aktiv && (
         <div className="px-3 pb-3">
