@@ -23,9 +23,9 @@ function App() {
         style={{
           zIndex: -1,
           backgroundImage: `
-            radial-gradient(ellipse 80% 45% at 5% 0%, ${weltFarbe}22, transparent 55%),
-            radial-gradient(ellipse 60% 50% at 95% 100%, rgba(99,102,241,0.10), transparent 60%),
-            radial-gradient(circle, rgba(255,255,255,0.05) 1px, transparent 1px)
+            radial-gradient(ellipse 100% 55% at 0% 0%, ${weltFarbe}40, transparent 60%),
+            radial-gradient(ellipse 70% 50% at 100% 100%, rgba(99,102,241,0.18), transparent 60%),
+            radial-gradient(circle, rgba(255,255,255,0.06) 1px, transparent 1px)
           `,
           backgroundSize: '100% 100%, 100% 100%, 22px 22px',
         }}

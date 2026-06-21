@@ -137,10 +137,10 @@ export function BusinessCard({ id }: { id: string }) {
 
   return (
     <div
-      className={`relative mb-2 ${aktiv ? 'rounded-r-xl bg-slate-800' : 'rounded-xl bg-slate-900/80'} ${blitz ? 'meilenstein-blitz' : ''}`}
+      className={`relative mb-2 ${aktiv ? 'rounded-r-xl' : 'rounded-xl'} ${blitz ? 'meilenstein-blitz' : ''}`}
       style={aktiv
-        ? { border: '1px solid #334155', borderLeft: `3px solid ${weltFarbe}` }
-        : { border: '1.5px dashed #2a3547' }
+        ? { background: '#1d2d44', border: '1px solid #2d3f5a', borderLeft: `5px solid ${weltFarbe}` }
+        : { background: '#151e2e', border: `1.5px dashed ${weltFarbe}66` }
       }
     >
       {floats.map((f) => (
@@ -191,7 +191,10 @@ export function BusinessCard({ id }: { id: string }) {
 
         <div className={`min-w-0 flex-1 ${aktiv ? '' : 'opacity-55'}`}>
           <div className="flex items-center gap-1">
-            <span className={`truncate font-medium ${aktiv ? 'text-slate-100' : 'text-slate-400'}`}>{b.name}</span>
+            <span
+              className={`truncate font-medium ${aktiv ? '' : 'text-slate-400'}`}
+              style={aktiv ? { color: weltTint } : undefined}
+            >{b.name}</span>
             {aktiv && (
               <button
                 onClick={() => setUpgradeOffen((o) => !o)}

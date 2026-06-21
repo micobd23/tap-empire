@@ -37,6 +37,7 @@ export const WELTEN: WeltConfig[] = [
   { id: 'welt1', name: 'Klassik',  emoji: '🌍', freischaltKosten: 0,                        bonus: 0,    farbe: '#22c55e', farbeTint: '#86efac' },
   { id: 'welt2', name: 'Zukunft',  emoji: '🚀', freischaltKosten: 800_000_000_000,             bonus: 0.5,  farbe: '#06b6d4', farbeTint: '#67e8f9' },
   { id: 'welt3', name: 'Imperium', emoji: '🌐', freischaltKosten: 250_000_000_000_000_000_000, bonus: 0.75, farbe: '#a855f7', farbeTint: '#d8b4fe' },
+  { id: 'welt4', name: 'Luxus',    emoji: '🎩', freischaltKosten: 100_000_000_000_000_000_000_000_000_000, bonus: 1.0, farbe: '#f59e0b', farbeTint: '#fcd34d' },
 ]
 
 /** Schneller Zugriff auf eine Welt über die id. */
@@ -65,6 +66,16 @@ export const BUSINESSES: BusinessConfig[] = [
   { id: 'mond',      welt: 'welt2', name: 'Mond-Mine',         emoji: '🌙', basisKosten: 2_675_000_000_000_000, kostenFaktor: 1.10, dauerMs: 64000,  basisErtrag: 1_337_500_000_000_000, managerKosten: 15_500_000_000_000_000 },
   { id: 'mars',      welt: 'welt2', name: 'Mars-Kolonie',      emoji: '🔴', basisKosten: 32_100_000_000_000_000,kostenFaktor: 1.10, dauerMs: 128000, basisErtrag: 16_050_000_000_000_000,managerKosten: 185_000_000_000_000_000 },
   { id: 'orbital',   welt: 'welt2', name: 'Orbital-Stadt',     emoji: '🛰️', basisKosten: 385_000_000_000_000_000,kostenFaktor: 1.10,dauerMs: 192000, basisErtrag: 192_500_000_000_000_000,managerKosten: 2_220_000_000_000_000_000 },
+
+  // --- Welt 4: Luxus & Unterhaltung (erste Business ~12× Weltbank; Quint./Sext.-Bereich) ---
+  { id: 'casino',       welt: 'welt4', name: 'Casino',               emoji: '🎰', basisKosten: 2_000_000_000_000_000_000_000_000_000,            kostenFaktor: 1.10, dauerMs: 2000,   basisErtrag: 1_000_000_000_000_000_000_000_000_000,             managerKosten: 12_000_000_000_000_000_000_000_000_000 },
+  { id: 'filmstudio',   welt: 'welt4', name: 'Filmstudio',           emoji: '🎬', basisKosten: 24_000_000_000_000_000_000_000_000_000,            kostenFaktor: 1.10, dauerMs: 4000,   basisErtrag: 12_000_000_000_000_000_000_000_000_000,            managerKosten: 144_000_000_000_000_000_000_000_000_000 },
+  { id: 'fussballklub', welt: 'welt4', name: 'Fußballklub',          emoji: '⚽', basisKosten: 288_000_000_000_000_000_000_000_000_000,           kostenFaktor: 1.10, dauerMs: 8000,   basisErtrag: 144_000_000_000_000_000_000_000_000_000,           managerKosten: 1_728_000_000_000_000_000_000_000_000_000 },
+  { id: 'formel1',      welt: 'welt4', name: 'Formel-1-Team',        emoji: '🏎️', basisKosten: 3_456_000_000_000_000_000_000_000_000_000,         kostenFaktor: 1.10, dauerMs: 16000,  basisErtrag: 1_728_000_000_000_000_000_000_000_000_000,         managerKosten: 20_736_000_000_000_000_000_000_000_000_000 },
+  { id: 'raumtourismus',welt: 'welt4', name: 'Raumfahrt-Tourismus',  emoji: '🛸', basisKosten: 41_472_000_000_000_000_000_000_000_000_000,        kostenFaktor: 1.10, dauerMs: 32000,  basisErtrag: 20_736_000_000_000_000_000_000_000_000_000,        managerKosten: 248_832_000_000_000_000_000_000_000_000_000 },
+  { id: 'privatinsel',  welt: 'welt4', name: 'Privatinsel',          emoji: '🏝️', basisKosten: 497_664_000_000_000_000_000_000_000_000_000,       kostenFaktor: 1.10, dauerMs: 64000,  basisErtrag: 248_832_000_000_000_000_000_000_000_000_000,       managerKosten: 2_985_984_000_000_000_000_000_000_000_000_000 },
+  { id: 'diamanten',    welt: 'welt4', name: 'Diamanten-Konzern',    emoji: '💎', basisKosten: 5_971_968_000_000_000_000_000_000_000_000_000,      kostenFaktor: 1.10, dauerMs: 128000, basisErtrag: 2_985_984_000_000_000_000_000_000_000_000_000,      managerKosten: 35_831_808_000_000_000_000_000_000_000_000_000 },
+  { id: 'luxusimperium',welt: 'welt4', name: 'Luxus-Imperium',       emoji: '🎩', basisKosten: 71_663_616_000_000_000_000_000_000_000_000_000,     kostenFaktor: 1.10, dauerMs: 192000, basisErtrag: 35_831_808_000_000_000_000_000_000_000_000_000,     managerKosten: 429_981_696_000_000_000_000_000_000_000_000_000 },
 
   // --- Welt 3: Globales Imperium (Kurve setzt ab ~12× dem neuen Welt-2-Orbital fort; ×5 skaliert) ---
   { id: 'fluglinie',      welt: 'welt3', name: 'Fluglinie',       emoji: '✈️',  basisKosten: 4_600_000_000_000_000_000,           kostenFaktor: 1.10, dauerMs: 2000,   basisErtrag: 2_300_000_000_000_000_000,            managerKosten: 27_600_000_000_000_000_000 },
@@ -120,7 +131,10 @@ export const RAENGE: { ab: number; titel: string }[] = [
   { ab: 10_000_000_000_000_000,    titel: 'Weltmacht' },
   { ab: 1_000_000_000_000_000_000, titel: 'Globalimperium' },
   { ab: 100_000_000_000_000_000_000, titel: 'Weltenlenker' },
-  { ab: 10_000_000_000_000_000_000_000, titel: 'Allherrscher' },
+  { ab: 10_000_000_000_000_000_000_000,       titel: 'Allherrscher' },
+  { ab: 1_000_000_000_000_000_000_000_000_000, titel: 'Luxusbaron' },
+  { ab: 1_000_000_000_000_000_000_000_000_000_000, titel: 'Goldfürst' },
+  { ab: 1_000_000_000_000_000_000_000_000_000_000_000, titel: 'Diamantkaiser' },
 ]
 
 /** Einkommens-Bonus pro erreichtem Erfolg (0,02 = +2 %). */
@@ -269,6 +283,39 @@ export const UPGRADES: UpgradeConfig[] = [
   { id: 'pharmakonzern_u1',  businessId: 'pharmakonzern',  name: 'Gentherapie',       beschreibung: '×2 Ertrag',            kosten: 820_800_000_000_000_000_000_000_000,effekt: 'ertrag', faktor: 2 },
   { id: 'pharmakonzern_u2',  businessId: 'pharmakonzern',  name: 'Nanomedizin',       beschreibung: '×2 schnellere Zyklen', kosten: 8_208_000_000_000_000_000_000_000_000,effekt: 'tempo', faktor: 2 },
   { id: 'pharmakonzern_u3',  businessId: 'pharmakonzern',  name: 'Unsterblichkeit',   beschreibung: '×3 Ertrag',            kosten: 82_080_000_000_000_000_000_000_000_000,effekt: 'ertrag',faktor: 3 },
+
+  // --- Welt 4: Luxus & Unterhaltung ---
+  { id: 'casino_u1',       businessId: 'casino',       name: 'VIP-Lounge',          beschreibung: '×2 Ertrag',            kosten: 120_000_000_000_000_000_000_000_000_000,         effekt: 'ertrag', faktor: 2 },
+  { id: 'casino_u2',       businessId: 'casino',       name: 'Highroller-Tisch',    beschreibung: '×2 schnellere Zyklen', kosten: 1_200_000_000_000_000_000_000_000_000_000,       effekt: 'tempo',  faktor: 2 },
+  { id: 'casino_u3',       businessId: 'casino',       name: 'Jackpot-Maschinen',   beschreibung: '×3 Ertrag',            kosten: 12_000_000_000_000_000_000_000_000_000_000,      effekt: 'ertrag', faktor: 3 },
+
+  { id: 'filmstudio_u1',   businessId: 'filmstudio',   name: 'Blockbuster-Deal',    beschreibung: '×2 Ertrag',            kosten: 1_440_000_000_000_000_000_000_000_000_000,       effekt: 'ertrag', faktor: 2 },
+  { id: 'filmstudio_u2',   businessId: 'filmstudio',   name: 'Streamingvertrag',    beschreibung: '×2 schnellere Zyklen', kosten: 14_400_000_000_000_000_000_000_000_000_000,      effekt: 'tempo',  faktor: 2 },
+  { id: 'filmstudio_u3',   businessId: 'filmstudio',   name: 'Oscar-Garantie',      beschreibung: '×3 Ertrag',            kosten: 144_000_000_000_000_000_000_000_000_000_000,     effekt: 'ertrag', faktor: 3 },
+
+  { id: 'fussballklub_u1', businessId: 'fussballklub', name: 'Weltklasse-Transfer', beschreibung: '×2 Ertrag',            kosten: 17_280_000_000_000_000_000_000_000_000_000,      effekt: 'ertrag', faktor: 2 },
+  { id: 'fussballklub_u2', businessId: 'fussballklub', name: 'Merchandising',       beschreibung: '×2 schnellere Zyklen', kosten: 172_800_000_000_000_000_000_000_000_000_000,     effekt: 'tempo',  faktor: 2 },
+  { id: 'fussballklub_u3', businessId: 'fussballklub', name: 'Champions-League',    beschreibung: '×3 Ertrag',            kosten: 1_728_000_000_000_000_000_000_000_000_000_000,   effekt: 'ertrag', faktor: 3 },
+
+  { id: 'formel1_u1',      businessId: 'formel1',      name: 'DRS-System',          beschreibung: '×2 Ertrag',            kosten: 207_360_000_000_000_000_000_000_000_000_000,     effekt: 'ertrag', faktor: 2 },
+  { id: 'formel1_u2',      businessId: 'formel1',      name: 'Windkanal',           beschreibung: '×2 schnellere Zyklen', kosten: 2_073_600_000_000_000_000_000_000_000_000_000,   effekt: 'tempo',  faktor: 2 },
+  { id: 'formel1_u3',      businessId: 'formel1',      name: 'WM-Titel',            beschreibung: '×3 Ertrag',            kosten: 20_736_000_000_000_000_000_000_000_000_000_000,  effekt: 'ertrag', faktor: 3 },
+
+  { id: 'raumtourismus_u1',businessId: 'raumtourismus',name: 'Luxus-Kapsel',        beschreibung: '×2 Ertrag',            kosten: 2_488_320_000_000_000_000_000_000_000_000_000,   effekt: 'ertrag', faktor: 2 },
+  { id: 'raumtourismus_u2',businessId: 'raumtourismus',name: 'Orbit-Hotel',         beschreibung: '×2 schnellere Zyklen', kosten: 24_883_200_000_000_000_000_000_000_000_000_000,  effekt: 'tempo',  faktor: 2 },
+  { id: 'raumtourismus_u3',businessId: 'raumtourismus',name: 'Mond-Ausflug',        beschreibung: '×3 Ertrag',            kosten: 248_832_000_000_000_000_000_000_000_000_000_000, effekt: 'ertrag', faktor: 3 },
+
+  { id: 'privatinsel_u1',  businessId: 'privatinsel',  name: 'Helipad',             beschreibung: '×2 Ertrag',            kosten: 29_859_840_000_000_000_000_000_000_000_000_000,  effekt: 'ertrag', faktor: 2 },
+  { id: 'privatinsel_u2',  businessId: 'privatinsel',  name: 'Unterwasser-Villa',   beschreibung: '×2 schnellere Zyklen', kosten: 298_598_400_000_000_000_000_000_000_000_000_000, effekt: 'tempo',  faktor: 2 },
+  { id: 'privatinsel_u3',  businessId: 'privatinsel',  name: 'Eigener Staat',       beschreibung: '×3 Ertrag',            kosten: 2_985_984_000_000_000_000_000_000_000_000_000_000,effekt: 'ertrag', faktor: 3 },
+
+  { id: 'diamanten_u1',    businessId: 'diamanten',    name: 'Tiefsee-Mine',        beschreibung: '×2 Ertrag',            kosten: 358_318_080_000_000_000_000_000_000_000_000_000, effekt: 'ertrag', faktor: 2 },
+  { id: 'diamanten_u2',    businessId: 'diamanten',    name: 'Laser-Cutter',        beschreibung: '×2 schnellere Zyklen', kosten: 3_583_180_800_000_000_000_000_000_000_000_000_000,effekt: 'tempo', faktor: 2 },
+  { id: 'diamanten_u3',    businessId: 'diamanten',    name: 'Weltraum-Asteroiden', beschreibung: '×3 Ertrag',            kosten: 35_831_808_000_000_000_000_000_000_000_000_000_000,effekt: 'ertrag',faktor: 3 },
+
+  { id: 'luxusimperium_u1',businessId: 'luxusimperium',name: 'Gold-Verkleidung',    beschreibung: '×2 Ertrag',            kosten: 4_299_816_960_000_000_000_000_000_000_000_000_000,effekt: 'ertrag', faktor: 2 },
+  { id: 'luxusimperium_u2',businessId: 'luxusimperium',name: 'KI-Butler',           beschreibung: '×2 schnellere Zyklen', kosten: 42_998_169_600_000_000_000_000_000_000_000_000_000,effekt: 'tempo', faktor: 2 },
+  { id: 'luxusimperium_u3',businessId: 'luxusimperium',name: 'Ewige Herrschaft',    beschreibung: '×3 Ertrag',            kosten: 429_981_696_000_000_000_000_000_000_000_000_000_000,effekt: 'ertrag',faktor: 3 },
 
   { id: 'weltbank_u1',       businessId: 'weltbank',       name: 'Digitale Währung',  beschreibung: '×2 Ertrag',            kosten: 9_849_600_000_000_000_000_000_000_000,effekt: 'ertrag', faktor: 2 },
   { id: 'weltbank_u2',       businessId: 'weltbank',       name: 'Hochfrequenzhandel',beschreibung: '×2 schnellere Zyklen', kosten: 98_496_000_000_000_000_000_000_000_000,effekt: 'tempo', faktor: 2 },

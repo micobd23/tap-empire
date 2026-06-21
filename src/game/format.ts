@@ -1,6 +1,6 @@
 // Große Zahlen lesbar machen: 1500 -> "1,5 Tsd.", 3_200_000 -> "3,2 Mio." usw.
 
-const EINHEITEN = ['', ' Tsd.', ' Mio.', ' Mrd.', ' Bio.', ' Brd.', ' Trill.', ' Trd.', ' Quad.', ' Quard.']
+const EINHEITEN = ['', ' Tsd.', ' Mio.', ' Mrd.', ' Bio.', ' Brd.', ' Trill.', ' Trd.', ' Quad.', ' Quard.', ' Quint.', ' Sext.']
 
 /** Formatiert einen Geldbetrag im deutschen Stil mit Tausender-Einheiten. */
 export function formatGeld(wert: number): string {
