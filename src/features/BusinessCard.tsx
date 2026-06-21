@@ -1,12 +1,13 @@
 // Eine Business-Karte: antippen zum Produzieren (mit fliegender +X), kaufen, Manager anstellen.
 import { useEffect, useRef, useState } from 'react'
 import { useGame } from '../store'
-import { BALKEN_VOLL_AB_MS, BUSINESS_MAP, MEILENSTEINE, WELT_MAP } from '../game/config'
+import { BALKEN_VOLL_AB_MS, BUSINESS_MAP, MEILENSTEINE, UPGRADES_BY_BUSINESS, WELT_MAP } from '../game/config'
 import { ertragProZyklus, kostenFuer, maxKaufbar, tempoMeilensteinFaktor } from '../game/economy'
 import { globalerEinkommensMultiplikator } from '../game/prestige'
 import { talentEffekte } from '../game/talents'
 import { formatGeld } from '../game/format'
 import { soundKauf, soundMeilenstein, soundTap } from '../sound'
+import { UpgradePanel } from './UpgradePanel'
 
 export function BusinessCard({ id }: { id: string }) {
   const b = BUSINESS_MAP[id]
@@ -19,10 +20,12 @@ export function BusinessCard({ id }: { id: string }) {
   const mult = useGame((s) => globalerEinkommensMultiplikator(s.state))
   const zyklusFaktor = useGame((s) => talentEffekte(s.state.talents).zyklusFaktor)
   const managerRabatt = useGame((s) => talentEffekte(s.state.talents).managerRabatt)
+  const gekaufteUpgrades = useGame((s) => s.state.gekaufteUpgrades ?? [])
   const kaufen = useGame((s) => s.kaufen)
   const antippen = useGame((s) => s.antippen)
   const managerKaufen = useGame((s) => s.managerKaufen)
 
+  const [upgradeOffen, setUpgradeOffen] = useState(false)
   const [floats, setFloats] = useState<{ key: number; wert: number }[]>([])
   // Münz-Partikel (mit zufälliger Flugbahn) und der Pop-Zähler fürs Emoji.
   const [muenzen, setMuenzen] = useState<{ key: number; dx: number; dy: number }[]>([])
@@ -128,9 +131,13 @@ export function BusinessCard({ id }: { id: string }) {
     setPopKey((k) => k + 1)
   }
 
+  const alleUpgrades = UPGRADES_BY_BUSINESS[id] ?? []
+  const anzahlGekauft = alleUpgrades.filter((u) => gekaufteUpgrades.includes(u.id)).length
+  const hatNochOffene = aktiv && anzahlGekauft < alleUpgrades.length
+
   return (
     <div
-      className={`relative mb-2 flex items-center gap-3 p-3 ${aktiv ? 'rounded-r-xl bg-slate-800' : 'rounded-xl bg-slate-900/80'} ${blitz ? 'meilenstein-blitz' : ''}`}
+      className={`relative mb-2 ${aktiv ? 'rounded-r-xl bg-slate-800' : 'rounded-xl bg-slate-900/80'} ${blitz ? 'meilenstein-blitz' : ''}`}
       style={aktiv
         ? { border: '1px solid #334155', borderLeft: `3px solid ${weltFarbe}` }
         : { border: '1.5px dashed #2a3547' }
@@ -154,71 +161,96 @@ export function BusinessCard({ id }: { id: string }) {
         </span>
       ))}
 
-      <button
-        onClick={handleTap}
-        disabled={!aktiv || hatManager}
-        aria-label={`${b.name} produzieren`}
-        className="relative flex h-16 w-16 shrink-0 items-center justify-center overflow-hidden rounded-lg text-3xl transition-transform active:scale-90 disabled:active:scale-100"
-        style={aktiv
-          ? { background: `${weltFarbe}18`, border: `1px solid ${weltFarbe}35` }
-          : { background: '#0d1424', filter: 'grayscale(1) opacity(0.45)' }
-        }
-      >
-        <span key={popKey} className={`relative z-10 ${popKey > 0 ? 'tap-pop' : ''}`}>
-          {b.emoji}
-        </span>
-        {aktiv && (
-          <span
-            className="absolute left-0.5 top-0.5 z-10 rounded px-1 text-[10px] font-semibold leading-tight"
-            style={{ background: 'rgba(0,0,0,0.65)', color: weltTint }}
-          >
-            ×{anzahl}
+      <div className="flex items-center gap-3 p-3">
+        <button
+          onClick={handleTap}
+          disabled={!aktiv || hatManager}
+          aria-label={`${b.name} produzieren`}
+          className="relative flex h-16 w-16 shrink-0 items-center justify-center overflow-hidden rounded-lg text-3xl transition-transform active:scale-90 disabled:active:scale-100"
+          style={aktiv
+            ? { background: `${weltFarbe}18`, border: `1px solid ${weltFarbe}35` }
+            : { background: '#0d1424', filter: 'grayscale(1) opacity(0.45)' }
+          }
+        >
+          <span key={popKey} className={`relative z-10 ${popKey > 0 ? 'tap-pop' : ''}`}>
+            {b.emoji}
           </span>
-        )}
-        <div
-          className="absolute bottom-0 left-0 h-2"
-          style={{ width: `${prozent}%`, background: weltFarbe }}
-        />
-      </button>
+          {aktiv && (
+            <span
+              className="absolute left-0.5 top-0.5 z-10 rounded px-1 text-[10px] font-semibold leading-tight"
+              style={{ background: 'rgba(0,0,0,0.65)', color: weltTint }}
+            >
+              ×{anzahl}
+            </span>
+          )}
+          <div
+            className="absolute bottom-0 left-0 h-2"
+            style={{ width: `${prozent}%`, background: weltFarbe }}
+          />
+        </button>
 
-      <div className={`min-w-0 flex-1 ${aktiv ? '' : 'opacity-55'}`}>
-        <div className={`truncate font-medium ${aktiv ? 'text-slate-100' : 'text-slate-400'}`}>{b.name}</div>
-        {aktiv ? (
-          <div className="whitespace-nowrap text-sm" style={{ color: weltFarbe }}>
-            +{formatGeld(ertragProSekunde)} € / s
+        <div className={`min-w-0 flex-1 ${aktiv ? '' : 'opacity-55'}`}>
+          <div className="flex items-center gap-1">
+            <span className={`truncate font-medium ${aktiv ? 'text-slate-100' : 'text-slate-400'}`}>{b.name}</span>
+            {aktiv && (
+              <button
+                onClick={() => setUpgradeOffen((o) => !o)}
+                aria-label="Upgrades anzeigen"
+                className="relative shrink-0 rounded px-1 text-sm leading-none text-slate-400 transition-colors hover:text-slate-200"
+              >
+                🔧
+                {hatNochOffene && anzahlGekauft < alleUpgrades.length && (
+                  <span
+                    className="absolute -right-0.5 -top-0.5 h-2 w-2 rounded-full"
+                    style={{ background: weltFarbe }}
+                  />
+                )}
+              </button>
+            )}
           </div>
-        ) : (
-          <div className="whitespace-nowrap text-sm text-slate-500">
-            ab {formatGeld(b.basisKosten)} €
-          </div>
-        )}
-        {aktiv && !hatManager && (
-          <button
-            onClick={() => managerKaufen(id)}
-            disabled={geld < managerKosten}
-            className="mt-1 whitespace-nowrap rounded-md bg-slate-700 px-2 py-0.5 text-xs text-slate-200 disabled:opacity-40"
-          >
-            Manager: {formatGeld(managerKosten)} €
-          </button>
-        )}
-        {hatManager && <div className="mt-1 text-xs text-amber-400">Manager aktiv ✓</div>}
+          {aktiv ? (
+            <div className="whitespace-nowrap text-sm" style={{ color: weltFarbe }}>
+              +{formatGeld(ertragProSekunde)} € / s
+            </div>
+          ) : (
+            <div className="whitespace-nowrap text-sm text-slate-500">
+              ab {formatGeld(b.basisKosten)} €
+            </div>
+          )}
+          {aktiv && !hatManager && (
+            <button
+              onClick={() => managerKaufen(id)}
+              disabled={geld < managerKosten}
+              className="mt-1 whitespace-nowrap rounded-md bg-slate-700 px-2 py-0.5 text-xs text-slate-200 disabled:opacity-40"
+            >
+              Manager: {formatGeld(managerKosten)} €
+            </button>
+          )}
+          {hatManager && <div className="mt-1 text-xs text-amber-400">Manager aktiv ✓</div>}
+        </div>
+
+        <button
+          onClick={() => {
+            kaufen(id, mengeRef.current)
+            soundKauf()
+          }}
+          onPointerDown={haltStart}
+          onPointerCancel={haltStop}
+          onContextMenu={(e) => e.preventDefault()}
+          disabled={!kannKaufen}
+          className="w-28 shrink-0 touch-none select-none rounded-lg px-2 py-2 text-center font-medium text-white transition-transform active:scale-95 disabled:bg-slate-700 disabled:text-slate-500 disabled:active:scale-100"
+          style={kannKaufen ? { background: weltFarbe } : undefined}
+        >
+          <div className="text-xs opacity-80">Kaufen ×{menge}</div>
+          <div className="truncate text-sm">{formatGeld(kosten)} €</div>
+        </button>
       </div>
 
-      <button
-        onClick={() => {
-          kaufen(id, mengeRef.current)
-          soundKauf()
-        }}
-        onPointerDown={haltStart}
-        onPointerCancel={haltStop}
-        onContextMenu={(e) => e.preventDefault()}
-        disabled={!kannKaufen}
-        className="w-28 shrink-0 touch-none select-none rounded-lg px-2 py-2 text-center font-medium text-white transition-transform active:scale-95 disabled:bg-slate-700 disabled:text-slate-500 disabled:active:scale-100"
-        style={kannKaufen ? { background: weltFarbe } : undefined}
-      >
-        <div className="text-xs opacity-80">Kaufen ×{menge}</div>
-        <div className="truncate text-sm">{formatGeld(kosten)} €</div>
-      </button>
+      {upgradeOffen && aktiv && (
+        <div className="px-3 pb-3">
+          <UpgradePanel businessId={id} weltFarbe={weltFarbe} />
+        </div>
+      )}
     </div>
   )
 }

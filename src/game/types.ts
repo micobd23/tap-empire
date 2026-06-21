@@ -46,6 +46,21 @@ export interface BusinessRuntime {
   laeuft: boolean
 }
 
+/** Ein käufliches Upgrade für ein einzelnes Business. */
+export interface UpgradeConfig {
+  id: string
+  /** Zu welchem Business dieses Upgrade gehört. */
+  businessId: string
+  name: string
+  beschreibung: string
+  /** Einmalige Geld-Kosten. */
+  kosten: number
+  /** Wirkt auf den Ertrag (Multiplikator auf basisErtrag) oder auf die Zykluszeit (Divisor). */
+  effekt: 'ertrag' | 'tempo'
+  /** Wie stark der Effekt ist (z.B. 2 = ×2 Ertrag, 2 = halb so lange Zyklen). */
+  faktor: number
+}
+
 /** Feste Eigenschaften eines Talents im Talentbaum (aus der config.ts). */
 export interface TalentConfig {
   id: string
@@ -84,6 +99,8 @@ export interface GameState {
   erfolgeAbgeholt: string[]
   /** Ids der freigeschalteten Welten (mindestens 'welt1'; weitere kosten Geld). */
   freigeschalteteWelten: string[]
+  /** Ids der bereits gekauften Business-Upgrades (dauerhaft, überleben Prestige). */
+  gekaufteUpgrades: string[]
   /** gesamtVerdient-Wert beim letzten Prestige (0 = noch kein Prestige). Basis für den Runden-Verdienst. */
   gesamtVerdientBeimLetztenPrestige: number
   /** Zeitstempel des letzten Speicherns — für die Offline-Berechnung. */

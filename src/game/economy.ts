@@ -7,6 +7,7 @@ import {
   TEMPO_MEILENSTEIN_BOOST,
   TEMPO_MEILENSTEIN_INTERVALL,
   TEMPO_MEILENSTEIN_MAX,
+  UPGRADES_BY_BUSINESS,
   WELT_MAP,
 } from './config'
 
@@ -105,9 +106,28 @@ export function naechsteTempoMeilenstein(anzahl: number): number | null {
   return naechsteStufe * TEMPO_MEILENSTEIN_INTERVALL
 }
 
-/** Ertrag einer einzelnen Auszahlung (ein Zyklus) bei gegebener Stückzahl. */
-export function ertragProZyklus(b: BusinessConfig, anzahl: number): number {
-  return anzahl * b.basisErtrag * meilensteinMultiplikator(anzahl)
+/**
+ * Upgrade-Multiplikatoren für ein Business aus der Liste gekaufter Upgrade-IDs.
+ * Gibt `{ ertragFaktor, tempoDivisor }` zurück — beide starten bei 1 (kein Effekt).
+ */
+export function upgradeEffekte(
+  businessId: string,
+  gekaufteUpgrades: string[],
+): { ertragFaktor: number; tempoDivisor: number } {
+  let ertragFaktor = 1
+  let tempoDivisor = 1
+  const upgrades = UPGRADES_BY_BUSINESS[businessId] ?? []
+  for (const u of upgrades) {
+    if (!gekaufteUpgrades.includes(u.id)) continue
+    if (u.effekt === 'ertrag') ertragFaktor *= u.faktor
+    else tempoDivisor *= u.faktor
+  }
+  return { ertragFaktor, tempoDivisor }
+}
+
+/** Ertrag einer einzelnen Auszahlung (ein Zyklus) bei gegebener Stückzahl und Upgrades. */
+export function ertragProZyklus(b: BusinessConfig, anzahl: number, ertragFaktor = 1): number {
+  return anzahl * b.basisErtrag * meilensteinMultiplikator(anzahl) * ertragFaktor
 }
 
 /**
@@ -118,10 +138,12 @@ export function einkommenProSekundeAuto(
   b: BusinessConfig,
   rt: BusinessRuntime,
   zyklusFaktor = 1,
+  ertragFaktor = 1,
+  tempoDivisor = 1,
 ): number {
   if (rt.anzahl === 0 || !rt.hatManager) return 0
-  const dauer = b.dauerMs * zyklusFaktor * tempoMeilensteinFaktor(rt.anzahl)
-  return ertragProZyklus(b, rt.anzahl) / (dauer / 1000)
+  const dauer = (b.dauerMs / tempoDivisor) * zyklusFaktor * tempoMeilensteinFaktor(rt.anzahl)
+  return ertragProZyklus(b, rt.anzahl, ertragFaktor) / (dauer / 1000)
 }
 
 /** Gesamtes automatisches Einkommen pro Sekunde (für den Header), inkl. Multiplikator & Tempo. */
@@ -133,7 +155,9 @@ export function gesamtEinkommenProSekunde(
   let summe = 0
   for (const b of BUSINESSES) {
     const rt = state.businesses[b.id]
-    if (rt) summe += einkommenProSekundeAuto(b, rt, zyklusFaktor)
+    if (!rt) continue
+    const { ertragFaktor, tempoDivisor } = upgradeEffekte(b.id, state.gekaufteUpgrades ?? [])
+    summe += einkommenProSekundeAuto(b, rt, zyklusFaktor, ertragFaktor, tempoDivisor)
   }
   return summe * multiplikator
 }

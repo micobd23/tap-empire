@@ -1,6 +1,6 @@
 // ALLE Spieldaten und Balance-Werte an einem Ort.
 // Wenn das Spiel sich zu schnell oder zu langsam anfühlt, ändert man NUR hier die Zahlen.
-import type { BusinessConfig, TalentConfig, WeltConfig } from './types'
+import type { BusinessConfig, TalentConfig, UpgradeConfig, WeltConfig } from './types'
 
 /** Geld, mit dem man ins Spiel startet (reicht für die ersten Limonadenstände). */
 export const START_GELD = 10
@@ -168,6 +168,124 @@ export const TALENTE: TalentConfig[] = [
   { id: 'm5', ast: 'Meisterschaft', name: 'Imperium',          beschreibung: '+100 % bei 4+ Sorten à 100 Stück', kosten: 5, voraussetzung: 'm4' },
   { id: 'minf', ast: 'Meisterschaft', name: 'Meisterschaft endlos', beschreibung: '+0,5 % je 100 Stück je Stufe', kosten: 5, voraussetzung: 'm5', endlos: true },
 ]
+
+/**
+ * Käufliche Upgrades pro Business (3 Stück je Business, dauerhaft — überleben Prestige).
+ * Upgrade 1: ×2 Ertrag  |  Upgrade 2: ×2 Speed (halbe Zykluszeit)  |  Upgrade 3: ×3 Ertrag
+ * Kosten: grob ~10× / ~100× / ~1000× der Manager-Kosten.
+ */
+export const UPGRADES: UpgradeConfig[] = [
+  // --- Welt 1: Klassik ---
+  { id: 'limonade_u1', businessId: 'limonade', name: 'Zitronenpresse',   beschreibung: '×2 Ertrag',            kosten: 10_000,          effekt: 'ertrag', faktor: 2 },
+  { id: 'limonade_u2', businessId: 'limonade', name: 'Lieferwagen',      beschreibung: '×2 schnellere Zyklen', kosten: 100_000,         effekt: 'tempo',  faktor: 2 },
+  { id: 'limonade_u3', businessId: 'limonade', name: 'Geheimrezept',     beschreibung: '×3 Ertrag',            kosten: 1_000_000,       effekt: 'ertrag', faktor: 3 },
+
+  { id: 'zeitung_u1',  businessId: 'zeitung',  name: 'Druckmaschine',    beschreibung: '×2 Ertrag',            kosten: 150_000,         effekt: 'ertrag', faktor: 2 },
+  { id: 'zeitung_u2',  businessId: 'zeitung',  name: 'Fahrradbote',      beschreibung: '×2 schnellere Zyklen', kosten: 1_500_000,       effekt: 'tempo',  faktor: 2 },
+  { id: 'zeitung_u3',  businessId: 'zeitung',  name: 'Digitalabo',       beschreibung: '×3 Ertrag',            kosten: 15_000_000,      effekt: 'ertrag', faktor: 3 },
+
+  { id: 'waesche_u1',  businessId: 'waesche',  name: 'Hochdruckreiniger',beschreibung: '×2 Ertrag',            kosten: 1_000_000,       effekt: 'ertrag', faktor: 2 },
+  { id: 'waesche_u2',  businessId: 'waesche',  name: 'Förderbahn',       beschreibung: '×2 schnellere Zyklen', kosten: 10_000_000,      effekt: 'tempo',  faktor: 2 },
+  { id: 'waesche_u3',  businessId: 'waesche',  name: 'Vollautomatik',    beschreibung: '×3 Ertrag',            kosten: 100_000_000,     effekt: 'ertrag', faktor: 3 },
+
+  { id: 'pizza_u1',    businessId: 'pizza',    name: 'Spezialsoße',      beschreibung: '×2 Ertrag',            kosten: 5_000_000,       effekt: 'ertrag', faktor: 2 },
+  { id: 'pizza_u2',    businessId: 'pizza',    name: 'Lieferservice',    beschreibung: '×2 schnellere Zyklen', kosten: 50_000_000,      effekt: 'tempo',  faktor: 2 },
+  { id: 'pizza_u3',    businessId: 'pizza',    name: 'Holzofen',         beschreibung: '×3 Ertrag',            kosten: 500_000_000,     effekt: 'ertrag', faktor: 3 },
+
+  { id: 'donut_u1',    businessId: 'donut',    name: 'Zuckerglasur',     beschreibung: '×2 Ertrag',            kosten: 12_000_000,      effekt: 'ertrag', faktor: 2 },
+  { id: 'donut_u2',    businessId: 'donut',    name: 'Backstraße',       beschreibung: '×2 schnellere Zyklen', kosten: 120_000_000,     effekt: 'tempo',  faktor: 2 },
+  { id: 'donut_u3',    businessId: 'donut',    name: 'Franchisevertrag', beschreibung: '×3 Ertrag',            kosten: 1_200_000_000,   effekt: 'ertrag', faktor: 3 },
+
+  { id: 'fitness_u1',  businessId: 'fitness',  name: 'Premiumgeräte',    beschreibung: '×2 Ertrag',            kosten: 100_000_000,     effekt: 'ertrag', faktor: 2 },
+  { id: 'fitness_u2',  businessId: 'fitness',  name: '24h-Betrieb',      beschreibung: '×2 schnellere Zyklen', kosten: 1_000_000_000,   effekt: 'tempo',  faktor: 2 },
+  { id: 'fitness_u3',  businessId: 'fitness',  name: 'Wellness-Spa',     beschreibung: '×3 Ertrag',            kosten: 10_000_000_000,  effekt: 'ertrag', faktor: 3 },
+
+  { id: 'bank_u1',     businessId: 'bank',     name: 'Online-Banking',   beschreibung: '×2 Ertrag',            kosten: 1_000_000_000,   effekt: 'ertrag', faktor: 2 },
+  { id: 'bank_u2',     businessId: 'bank',     name: 'Expresschalter',   beschreibung: '×2 schnellere Zyklen', kosten: 10_000_000_000,  effekt: 'tempo',  faktor: 2 },
+  { id: 'bank_u3',     businessId: 'bank',     name: 'Kreditkarten',     beschreibung: '×3 Ertrag',            kosten: 100_000_000_000, effekt: 'ertrag', faktor: 3 },
+
+  { id: 'immobilien_u1', businessId: 'immobilien', name: 'Luxussanierung',  beschreibung: '×2 Ertrag',            kosten: 10_000_000_000,   effekt: 'ertrag', faktor: 2 },
+  { id: 'immobilien_u2', businessId: 'immobilien', name: 'Hausverwalter',   beschreibung: '×2 schnellere Zyklen', kosten: 100_000_000_000,  effekt: 'tempo',  faktor: 2 },
+  { id: 'immobilien_u3', businessId: 'immobilien', name: 'Immobilienfonds', beschreibung: '×3 Ertrag',            kosten: 1_000_000_000_000,effekt: 'ertrag', faktor: 3 },
+
+  // --- Welt 2: Zukunft & Weltraum ---
+  { id: 'startup_u1',   businessId: 'startup',   name: 'Series-A-Funding', beschreibung: '×2 Ertrag',            kosten: 600_000_000_000,            effekt: 'ertrag', faktor: 2 },
+  { id: 'startup_u2',   businessId: 'startup',   name: 'Agile-Sprint',     beschreibung: '×2 schnellere Zyklen', kosten: 6_000_000_000_000,          effekt: 'tempo',  faktor: 2 },
+  { id: 'startup_u3',   businessId: 'startup',   name: 'Börsengang',       beschreibung: '×3 Ertrag',            kosten: 60_000_000_000_000,         effekt: 'ertrag', faktor: 3 },
+
+  { id: 'eauto_u1',     businessId: 'eauto',     name: 'Gigafabrik',       beschreibung: '×2 Ertrag',            kosten: 7_500_000_000_000,          effekt: 'ertrag', faktor: 2 },
+  { id: 'eauto_u2',     businessId: 'eauto',     name: 'Roboterstraße',    beschreibung: '×2 schnellere Zyklen', kosten: 75_000_000_000_000,         effekt: 'tempo',  faktor: 2 },
+  { id: 'eauto_u3',     businessId: 'eauto',     name: 'Supercharger-Netz',beschreibung: '×3 Ertrag',            kosten: 750_000_000_000_000,        effekt: 'ertrag', faktor: 3 },
+
+  { id: 'roboter_u1',   businessId: 'roboter',   name: 'KI-Steuerung',     beschreibung: '×2 Ertrag',            kosten: 90_000_000_000_000,         effekt: 'ertrag', faktor: 2 },
+  { id: 'roboter_u2',   businessId: 'roboter',   name: 'Nanomotoren',      beschreibung: '×2 schnellere Zyklen', kosten: 900_000_000_000_000,        effekt: 'tempo',  faktor: 2 },
+  { id: 'roboter_u3',   businessId: 'roboter',   name: 'Selbst-Replikation',beschreibung: '×3 Ertrag',           kosten: 9_000_000_000_000_000,      effekt: 'ertrag', faktor: 3 },
+
+  { id: 'ki_u1',        businessId: 'ki',        name: 'Quantenchips',     beschreibung: '×2 Ertrag',            kosten: 1_080_000_000_000_000,      effekt: 'ertrag', faktor: 2 },
+  { id: 'ki_u2',        businessId: 'ki',        name: 'Glasfasernetz',    beschreibung: '×2 schnellere Zyklen', kosten: 10_800_000_000_000_000,     effekt: 'tempo',  faktor: 2 },
+  { id: 'ki_u3',        businessId: 'ki',        name: 'AGI-Modul',        beschreibung: '×3 Ertrag',            kosten: 108_000_000_000_000_000,    effekt: 'ertrag', faktor: 3 },
+
+  { id: 'raumfahrt_u1', businessId: 'raumfahrt', name: 'Wiederverwendung', beschreibung: '×2 Ertrag',            kosten: 13_000_000_000_000_000,     effekt: 'ertrag', faktor: 2 },
+  { id: 'raumfahrt_u2', businessId: 'raumfahrt', name: 'Ionenantrieb',     beschreibung: '×2 schnellere Zyklen', kosten: 130_000_000_000_000_000,    effekt: 'tempo',  faktor: 2 },
+  { id: 'raumfahrt_u3', businessId: 'raumfahrt', name: 'Warpkern',         beschreibung: '×3 Ertrag',            kosten: 1_300_000_000_000_000_000,  effekt: 'ertrag', faktor: 3 },
+
+  { id: 'mond_u1',      businessId: 'mond',      name: 'Schmelzofen',      beschreibung: '×2 Ertrag',            kosten: 155_000_000_000_000_000,    effekt: 'ertrag', faktor: 2 },
+  { id: 'mond_u2',      businessId: 'mond',      name: 'Schwerkraftpumpe', beschreibung: '×2 schnellere Zyklen', kosten: 1_550_000_000_000_000_000,  effekt: 'tempo',  faktor: 2 },
+  { id: 'mond_u3',      businessId: 'mond',      name: 'Helium-3-Reaktor', beschreibung: '×3 Ertrag',            kosten: 15_500_000_000_000_000_000, effekt: 'ertrag', faktor: 3 },
+
+  { id: 'mars_u1',      businessId: 'mars',      name: 'Terraforming',     beschreibung: '×2 Ertrag',            kosten: 1_850_000_000_000_000_000,  effekt: 'ertrag', faktor: 2 },
+  { id: 'mars_u2',      businessId: 'mars',      name: 'Hyperloop-Tunnel', beschreibung: '×2 schnellere Zyklen', kosten: 18_500_000_000_000_000_000, effekt: 'tempo',  faktor: 2 },
+  { id: 'mars_u3',      businessId: 'mars',      name: 'Marsstaat',        beschreibung: '×3 Ertrag',            kosten: 185_000_000_000_000_000_000,effekt: 'ertrag', faktor: 3 },
+
+  { id: 'orbital_u1',   businessId: 'orbital',   name: 'Solarsegel',       beschreibung: '×2 Ertrag',            kosten: 22_200_000_000_000_000_000, effekt: 'ertrag', faktor: 2 },
+  { id: 'orbital_u2',   businessId: 'orbital',   name: 'Weltraumaufzug',   beschreibung: '×2 schnellere Zyklen', kosten: 222_000_000_000_000_000_000,effekt: 'tempo',  faktor: 2 },
+  { id: 'orbital_u3',   businessId: 'orbital',   name: 'Dyson-Ring',       beschreibung: '×3 Ertrag',            kosten: 2_220_000_000_000_000_000_000,effekt: 'ertrag',faktor: 3 },
+
+  // --- Welt 3: Globales Imperium ---
+  { id: 'fluglinie_u1',      businessId: 'fluglinie',      name: 'Business-Class',    beschreibung: '×2 Ertrag',            kosten: 276_000_000_000_000_000_000,      effekt: 'ertrag', faktor: 2 },
+  { id: 'fluglinie_u2',      businessId: 'fluglinie',      name: 'Direktrouten',      beschreibung: '×2 schnellere Zyklen', kosten: 2_760_000_000_000_000_000_000,    effekt: 'tempo',  faktor: 2 },
+  { id: 'fluglinie_u3',      businessId: 'fluglinie',      name: 'Überschalljet',     beschreibung: '×3 Ertrag',            kosten: 27_600_000_000_000_000_000_000,   effekt: 'ertrag', faktor: 3 },
+
+  { id: 'reederei_u1',       businessId: 'reederei',       name: 'Containerflotte',   beschreibung: '×2 Ertrag',            kosten: 3_300_000_000_000_000_000_000,    effekt: 'ertrag', faktor: 2 },
+  { id: 'reederei_u2',       businessId: 'reederei',       name: 'Autopilot-Navigation',beschreibung: '×2 schnellere Zyklen',kosten: 33_000_000_000_000_000_000_000,  effekt: 'tempo',  faktor: 2 },
+  { id: 'reederei_u3',       businessId: 'reederei',       name: 'Tiefseekabel',      beschreibung: '×3 Ertrag',            kosten: 330_000_000_000_000_000_000_000,  effekt: 'ertrag', faktor: 3 },
+
+  { id: 'oelkonzern_u1',     businessId: 'oelkonzern',     name: 'Tiefbohrung',       beschreibung: '×2 Ertrag',            kosten: 39_600_000_000_000_000_000_000,   effekt: 'ertrag', faktor: 2 },
+  { id: 'oelkonzern_u2',     businessId: 'oelkonzern',     name: 'Pipeline-Netz',     beschreibung: '×2 schnellere Zyklen', kosten: 396_000_000_000_000_000_000_000,  effekt: 'tempo',  faktor: 2 },
+  { id: 'oelkonzern_u3',     businessId: 'oelkonzern',     name: 'Raffinerie-KI',     beschreibung: '×3 Ertrag',            kosten: 3_960_000_000_000_000_000_000_000,effekt: 'ertrag', faktor: 3 },
+
+  { id: 'stahlwerk_u1',      businessId: 'stahlwerk',      name: 'Elektrolichtbogen', beschreibung: '×2 Ertrag',            kosten: 475_200_000_000_000_000_000_000,  effekt: 'ertrag', faktor: 2 },
+  { id: 'stahlwerk_u2',      businessId: 'stahlwerk',      name: 'Walzstraße',        beschreibung: '×2 schnellere Zyklen', kosten: 4_752_000_000_000_000_000_000_000,effekt: 'tempo',  faktor: 2 },
+  { id: 'stahlwerk_u3',      businessId: 'stahlwerk',      name: 'Nano-Legierung',    beschreibung: '×3 Ertrag',            kosten: 47_520_000_000_000_000_000_000_000,effekt: 'ertrag',faktor: 3 },
+
+  { id: 'techriese_u1',      businessId: 'techriese',      name: 'App-Store',         beschreibung: '×2 Ertrag',            kosten: 5_700_000_000_000_000_000_000_000,effekt: 'ertrag', faktor: 2 },
+  { id: 'techriese_u2',      businessId: 'techriese',      name: 'Cloud-Monopol',     beschreibung: '×2 schnellere Zyklen', kosten: 57_000_000_000_000_000_000_000_000,effekt: 'tempo', faktor: 2 },
+  { id: 'techriese_u3',      businessId: 'techriese',      name: 'Metaverse',         beschreibung: '×3 Ertrag',            kosten: 570_000_000_000_000_000_000_000_000,effekt: 'ertrag',faktor: 3 },
+
+  { id: 'medienimperium_u1', businessId: 'medienimperium', name: 'Streamingplattform',beschreibung: '×2 Ertrag',            kosten: 68_400_000_000_000_000_000_000_000,effekt: 'ertrag', faktor: 2 },
+  { id: 'medienimperium_u2', businessId: 'medienimperium', name: 'Weltweites Netz',   beschreibung: '×2 schnellere Zyklen', kosten: 684_000_000_000_000_000_000_000_000,effekt: 'tempo', faktor: 2 },
+  { id: 'medienimperium_u3', businessId: 'medienimperium', name: 'Neuralink-Werbung', beschreibung: '×3 Ertrag',            kosten: 6_840_000_000_000_000_000_000_000_000,effekt: 'ertrag',faktor: 3 },
+
+  { id: 'pharmakonzern_u1',  businessId: 'pharmakonzern',  name: 'Gentherapie',       beschreibung: '×2 Ertrag',            kosten: 820_800_000_000_000_000_000_000_000,effekt: 'ertrag', faktor: 2 },
+  { id: 'pharmakonzern_u2',  businessId: 'pharmakonzern',  name: 'Nanomedizin',       beschreibung: '×2 schnellere Zyklen', kosten: 8_208_000_000_000_000_000_000_000_000,effekt: 'tempo', faktor: 2 },
+  { id: 'pharmakonzern_u3',  businessId: 'pharmakonzern',  name: 'Unsterblichkeit',   beschreibung: '×3 Ertrag',            kosten: 82_080_000_000_000_000_000_000_000_000,effekt: 'ertrag',faktor: 3 },
+
+  { id: 'weltbank_u1',       businessId: 'weltbank',       name: 'Digitale Währung',  beschreibung: '×2 Ertrag',            kosten: 9_849_600_000_000_000_000_000_000_000,effekt: 'ertrag', faktor: 2 },
+  { id: 'weltbank_u2',       businessId: 'weltbank',       name: 'Hochfrequenzhandel',beschreibung: '×2 schnellere Zyklen', kosten: 98_496_000_000_000_000_000_000_000_000,effekt: 'tempo', faktor: 2 },
+  { id: 'weltbank_u3',       businessId: 'weltbank',       name: 'Globaler Reservefonds',beschreibung: '×3 Ertrag',         kosten: 984_960_000_000_000_000_000_000_000_000,effekt: 'ertrag',faktor: 3 },
+]
+
+/** Schneller Zugriff auf alle Upgrades eines Business. */
+export const UPGRADES_BY_BUSINESS: Record<string, UpgradeConfig[]> = {}
+for (const u of UPGRADES) {
+  if (!UPGRADES_BY_BUSINESS[u.businessId]) UPGRADES_BY_BUSINESS[u.businessId] = []
+  UPGRADES_BY_BUSINESS[u.businessId].push(u)
+}
+
+/** Schneller Zugriff auf ein Upgrade über die id. */
+export const UPGRADE_MAP: Record<string, UpgradeConfig> = Object.fromEntries(
+  UPGRADES.map((u) => [u.id, u]),
+)
 
 /** Schneller Zugriff auf ein Talent über die id. */
 export const TALENT_MAP: Record<string, TalentConfig> = Object.fromEntries(

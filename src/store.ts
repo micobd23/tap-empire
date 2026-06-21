@@ -3,7 +3,7 @@ import { create } from 'zustand'
 import type { GameState } from './game/types'
 import { exportieren, importieren, laden, neuerSpielstand, speichern } from './game/save'
 import { applyOffline, tick } from './game/engine'
-import { BUSINESS_MAP, WELT_MAP } from './game/config'
+import { BUSINESS_MAP, UPGRADE_MAP, WELT_MAP } from './game/config'
 import { kostenFuer } from './game/economy'
 import { kannPrestige, prestigeDurchfuehren } from './game/prestige'
 import { talentEffekte, talentKaufbar } from './game/talents'
@@ -29,6 +29,7 @@ interface GameStore {
   alleErfolgeAbholen: () => void
   setAktiveWelt: (id: string) => void
   weltFreischalten: (id: string) => void
+  upgradeKaufen: (id: string) => void
   spielstandExportieren: () => string
   spielstandImportieren: (text: string) => boolean
   spielstandZuruecksetzen: () => void
@@ -139,6 +140,18 @@ export const useGame = create<GameStore>((set, get) => ({
       s.state.freigeschalteteWelten = [...s.state.freigeschalteteWelten, id]
       // Direkt in die neue Welt wechseln, damit man gleich loslegen kann.
       return { state: { ...s.state }, aktiveWelt: id }
+    }),
+
+  upgradeKaufen: (id) =>
+    set((s) => {
+      const u = UPGRADE_MAP[id]
+      if (!u) return {}
+      const bereits = s.state.gekaufteUpgrades ?? []
+      if (bereits.includes(id)) return {} // schon gekauft
+      if (s.state.geld < u.kosten) return {}
+      s.state.geld -= u.kosten
+      s.state.gekaufteUpgrades = [...bereits, id]
+      return { state: { ...s.state } }
     }),
 
   spielstandExportieren: () => exportieren(get().state),

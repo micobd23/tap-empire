@@ -2,7 +2,7 @@
 // `tick` verändert den übergebenen Zustand direkt (der Store kümmert sich ums Neu-Rendern).
 import type { GameState } from './types'
 import { AUTO_KAUFER_AB_PRESTIGE, BUSINESSES } from './config'
-import { bestesLeistbares, ertragProZyklus, kostenFuer, tempoMeilensteinFaktor } from './economy'
+import { bestesLeistbares, ertragProZyklus, kostenFuer, tempoMeilensteinFaktor, upgradeEffekte } from './economy'
 import { globalerEinkommensMultiplikator } from './prestige'
 import { talentEffekte } from './talents'
 import { erfolgePruefen } from './erfolge'
@@ -18,18 +18,19 @@ export function tick(state: GameState, deltaMs: number): void {
     // Läuft nur, wenn ein Manager da ist ODER der Spieler manuell gestartet hat.
     if (!rt.hatManager && !rt.laeuft) continue
 
-    const dauer = b.dauerMs * zyklusFaktor * tempoMeilensteinFaktor(rt.anzahl)
+    const { ertragFaktor, tempoDivisor } = upgradeEffekte(b.id, state.gekaufteUpgrades ?? [])
+    const dauer = (b.dauerMs / tempoDivisor) * zyklusFaktor * tempoMeilensteinFaktor(rt.anzahl)
     rt.fortschrittMs += deltaMs
     if (rt.fortschrittMs < dauer) continue
 
     if (rt.hatManager) {
       const zyklen = Math.floor(rt.fortschrittMs / dauer)
-      const ertrag = ertragProZyklus(b, rt.anzahl) * mult * zyklen
+      const ertrag = ertragProZyklus(b, rt.anzahl, ertragFaktor) * mult * zyklen
       state.geld += ertrag
       state.gesamtVerdient += ertrag
       rt.fortschrittMs -= zyklen * dauer
     } else {
-      const ertrag = ertragProZyklus(b, rt.anzahl) * mult
+      const ertrag = ertragProZyklus(b, rt.anzahl, ertragFaktor) * mult
       state.geld += ertrag
       state.gesamtVerdient += ertrag
       rt.fortschrittMs = 0
@@ -67,11 +68,12 @@ export function applyOffline(state: GameState, vergangenMs: number): number {
     const rt = state.businesses[b.id]
     if (!rt || rt.anzahl === 0 || !rt.hatManager) continue
 
-    const dauer = b.dauerMs * eff.zyklusFaktor * tempoMeilensteinFaktor(rt.anzahl)
+    const { ertragFaktor, tempoDivisor } = upgradeEffekte(b.id, state.gekaufteUpgrades ?? [])
+    const dauer = (b.dauerMs / tempoDivisor) * eff.zyklusFaktor * tempoMeilensteinFaktor(rt.anzahl)
     const gesamt = rt.fortschrittMs + ms
     const zyklen = Math.floor(gesamt / dauer)
     if (zyklen > 0) {
-      verdient += ertragProZyklus(b, rt.anzahl) * mult * zyklen
+      verdient += ertragProZyklus(b, rt.anzahl, ertragFaktor) * mult * zyklen
       rt.fortschrittMs = gesamt - zyklen * dauer
     } else {
       rt.fortschrittMs = gesamt
