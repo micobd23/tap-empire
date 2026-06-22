@@ -33,7 +33,10 @@ export function BusinessList() {
       <NaechsterTipp />
 
       {/* Imperium-Tap: freier Bonus, bezieht sich auf die ganze aktive Welt. */}
-      <WeltTap />
+      {/* sticky: bleibt beim Scrollen immer im Bild, knapp unter dem Header */}
+      <div className="sticky top-[160px] z-20 -mx-3 px-3 pb-1 backdrop-blur" style={{ background: 'rgba(15,18,30,0.92)' }}>
+        <WeltTap />
+      </div>
 
       {/* Welt-Umschalter — erscheint, sobald es eine zweite Welt zu sehen/freizuschalten gibt. */}
       {sichtbareWelten.length > 1 && (

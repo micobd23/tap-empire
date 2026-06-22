@@ -158,7 +158,7 @@ export function einkommenProSekundeGesamt(state: GameState): number {
  * Klein genug, dass Idle immer der Hauptmotor bleibt — Tappen ist ein freier Bonus,
  * nie nötig (man kann gar nicht schnell genug tippen, um das Idle-Einkommen zu schlagen).
  */
-export const TAP_SEKUNDEN = 2
+export const TAP_SEKUNDEN = 1
 
 /**
  * Ertrag eines einzelnen Imperium-Taps: bezieht sich auf die GESAMTE Welt
