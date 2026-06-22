@@ -1,8 +1,8 @@
 // Der Erfolge-Bildschirm: Liste aller Erfolge + aufklappbare Statistiken.
 import { useState } from 'react'
 import { useGame } from '../store'
-import { ERFOLGE } from '../game/erfolge'
-import { ERFOLG_BONUS, BUSINESSES } from '../game/config'
+import { ERFOLGE, ERFOLG_MAP } from '../game/erfolge'
+import { BUSINESSES } from '../game/config'
 import { formatGeld } from '../game/format'
 
 function formatZeit(ms: number): string {
@@ -25,9 +25,13 @@ export function ErfolgeScreen() {
   const state = useGame((s) => s.state)
   const [statsOffen, setStatsOffen] = useState(false)
 
-  const bonusProzent = Math.round(ERFOLG_BONUS * 100)
   const abgeholt = erfolgeAbgeholt.length
   const abholbar = erfolge.filter((id) => !erfolgeAbgeholt.includes(id)).length
+  // Gestaffelt: Summe der Boni aller abgeholten Erfolge (in Prozent).
+  const bonusSummeProzent = Math.round(
+    erfolgeAbgeholt.reduce((sum, id) => sum + (ERFOLG_MAP[id]?.bonus ?? 0), 0) * 100,
+  )
+  const prozent = (id: string) => Math.round((ERFOLG_MAP[id]?.bonus ?? 0) * 100)
 
   return (
     <div className="pt-3">
@@ -37,7 +41,7 @@ export function ErfolgeScreen() {
           {abgeholt} <span className="text-lg text-emerald-300/70">/ {ERFOLGE.length}</span>
         </p>
         <p className="mt-1 text-xs text-emerald-300/70">
-          +{abgeholt * bonusProzent} % Einkommen aus Erfolgen (je +{bonusProzent} %)
+          +{bonusSummeProzent} % Einkommen aus Erfolgen (gestaffelt nach Schwierigkeit)
         </p>
         {abholbar > 0 && (
           <button
@@ -108,13 +112,13 @@ export function ErfolgeScreen() {
               </div>
               <div className="shrink-0 text-sm">
                 {fertig ? (
-                  <span className="font-medium text-emerald-400">✓ +{bonusProzent} %</span>
+                  <span className="font-medium text-emerald-400">✓ +{prozent(e.id)} %</span>
                 ) : offenZumAbholen ? (
                   <button
                     onClick={() => erfolgAbholen(e.id)}
                     className="rounded-lg bg-amber-600 px-3 py-1.5 font-semibold text-white"
                   >
-                    Abholen +{bonusProzent} %
+                    Abholen +{prozent(e.id)} %
                   </button>
                 ) : (
                   <span className="text-slate-500">🔒</span>

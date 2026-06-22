@@ -19,6 +19,10 @@ interface GameStore {
   kaufModus: KaufModus
   /** Welche Welt im Business-Tab gerade angezeigt wird (reine Anzeige, nicht gespeichert). */
   aktiveWelt: string
+  /** Ob das Tutorial-Overlay gerade manuell geöffnet ist (reine Anzeige, nicht gespeichert). */
+  hilfeOffen: boolean
+  hilfeOeffnen: () => void
+  hilfeSchliessen: () => void
   tickStore: (deltaMs: number) => void
   kaufen: (id: string, menge: number) => void
   managerKaufen: (id: string) => void
@@ -60,6 +64,9 @@ export const useGame = create<GameStore>((set, get) => ({
   ...start(),
   kaufModus: 1,
   aktiveWelt: 'welt1',
+  hilfeOffen: false,
+  hilfeOeffnen: () => set({ hilfeOffen: true }),
+  hilfeSchliessen: () => set({ hilfeOffen: false }),
 
   tickStore: (deltaMs) =>
     set((s) => {

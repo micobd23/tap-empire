@@ -95,15 +95,15 @@ export function talentEffekte(talents: Record<string, number>): TalentEffekte {
 
   // Tempo: Zyklusdauer-Faktor (kleiner = schneller), die höchste gekaufte Stufe gilt.
   const zyklusFaktor = hat('temp5')
-    ? 0.3
+    ? 0.1
     : hat('temp4')
-      ? 0.4
+      ? 0.25
       : hat('temp3')
-        ? 0.5
+        ? 0.4
         : hat('temp2')
-          ? 0.7
+          ? 0.6
           : hat('temp1')
-            ? 0.85
+            ? 0.8
             : 1
 
   // Kapital: Startkapital (k5 gilt), Investoren-Verstärkung (addiert sich), Welt-Rabatt (k1).

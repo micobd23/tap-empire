@@ -1,7 +1,7 @@
 // Kurzer Einstieg für neue Spieler: erklärt die Kernschleife in wenigen Schritten.
 // Erscheint nur beim allerersten Start (kein Flag gesetzt UND noch nichts verdient),
 // damit bestehende Spielstände nicht gestört werden.
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useGame } from '../store'
 
 const SCHLUESSEL = 'te-onboarding'
@@ -30,16 +30,25 @@ const SCHRITTE = [
 ]
 
 export function Onboarding() {
-  // Nur für echte Neulinge: einmalig beim Mount entscheiden (stabil bis weggeklickt).
-  const [zeige, setZeige] = useState(() => {
+  // Erst-Start: einmalig beim Mount entscheiden (stabil bis weggeklickt).
+  const [erstStart, setErstStart] = useState(() => {
     try {
       return !localStorage.getItem(SCHLUESSEL) && useGame.getState().state.gesamtVerdient === 0
     } catch {
       return false
     }
   })
+  // Manuelles Öffnen über den „?"-Knopf im Header.
+  const hilfeOffen = useGame((s) => s.hilfeOffen)
+  const hilfeSchliessen = useGame((s) => s.hilfeSchliessen)
   const [schritt, setSchritt] = useState(0)
 
+  // Beim manuellen Öffnen immer am Anfang starten.
+  useEffect(() => {
+    if (hilfeOffen) setSchritt(0)
+  }, [hilfeOffen])
+
+  const zeige = hilfeOffen || erstStart
   if (!zeige) return null
 
   function fertig() {
@@ -48,7 +57,8 @@ export function Onboarding() {
     } catch {
       // localStorage nicht verfügbar — dann erscheint es eben in dieser Sitzung erneut.
     }
-    setZeige(false)
+    setErstStart(false)
+    hilfeSchliessen()
   }
 
   const s = SCHRITTE[schritt]

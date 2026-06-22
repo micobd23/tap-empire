@@ -12,6 +12,7 @@ export function Header() {
   // (Nicht im Selector ein Objekt erzeugen — das löst in Zustand eine Endlosschleife aus.)
   const state = useGame((s) => s.state)
   const aktiveWelt = useGame((s) => s.aktiveWelt)
+  const hilfeOeffnen = useGame((s) => s.hilfeOeffnen)
   const [zeigeDetails, setZeigeDetails] = useState(false)
   const [tonAn, setTonAn] = useState(soundAktiv())
 
@@ -22,6 +23,13 @@ export function Header() {
 
   return (
     <header className="sticky top-0 z-30 border-b border-slate-700 bg-slate-900/95 px-4 py-3 text-center backdrop-blur">
+      <button
+        onClick={hilfeOeffnen}
+        aria-label="Tutorial anzeigen"
+        className="absolute left-3 top-3 text-lg leading-none opacity-70 active:scale-90"
+      >
+        ❓
+      </button>
       <button
         onClick={() => setTonAn(soundUmschalten())}
         aria-label={tonAn ? 'Ton ausschalten' : 'Ton einschalten'}

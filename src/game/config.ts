@@ -148,9 +148,6 @@ export const RAENGE: { ab: number; titel: string }[] = [
   { ab: 1_000_000_000_000_000_000_000_000_000_000_000, titel: 'Diamantkaiser' },
 ]
 
-/** Einkommens-Bonus pro erreichtem Erfolg (0,02 = +2 %). */
-export const ERFOLG_BONUS = 0.02
-
 /** Die Talente des Talentbaums, gruppiert in fünf Ästen. */
 export const ASTE = ['Wirtschaft', 'Tempo', 'Kapital', 'Offline', 'Meisterschaft'] as const
 
@@ -165,11 +162,11 @@ export const TALENTE: TalentConfig[] = [
   { id: 'w5', ast: 'Wirtschaft', name: 'Monopol',      beschreibung: '×3 Einkommen',    kosten: 5, voraussetzung: 'w4' },
   { id: 'winf', ast: 'Wirtschaft', name: 'Wachstum endlos', beschreibung: '+10 % Einkommen je Stufe', kosten: 5, voraussetzung: 'w5', endlos: true },
   // Ast Tempo — Produktionszyklen beschleunigen
-  { id: 'temp1', ast: 'Tempo', name: 'Fließband I',  beschreibung: 'Zyklen 15 % schneller', kosten: 1, voraussetzung: null },
-  { id: 'temp2', ast: 'Tempo', name: 'Fließband II', beschreibung: 'Zyklen 30 % schneller', kosten: 2, voraussetzung: 'temp1' },
-  { id: 'temp3', ast: 'Tempo', name: 'Überschall',   beschreibung: 'Zyklen 50 % schneller', kosten: 3, voraussetzung: 'temp2' },
-  { id: 'temp4', ast: 'Tempo', name: 'Hyperband',    beschreibung: 'Zyklen 60 % schneller', kosten: 4, voraussetzung: 'temp3' },
-  { id: 'temp5', ast: 'Tempo', name: 'Lichttempo',   beschreibung: 'Zyklen 70 % schneller', kosten: 5, voraussetzung: 'temp4' },
+  { id: 'temp1', ast: 'Tempo', name: 'Fließband I',  beschreibung: 'Zyklen 20 % schneller', kosten: 1, voraussetzung: null },
+  { id: 'temp2', ast: 'Tempo', name: 'Fließband II', beschreibung: 'Zyklen 40 % schneller', kosten: 2, voraussetzung: 'temp1' },
+  { id: 'temp3', ast: 'Tempo', name: 'Überschall',   beschreibung: 'Zyklen 60 % schneller', kosten: 3, voraussetzung: 'temp2' },
+  { id: 'temp4', ast: 'Tempo', name: 'Hyperband',    beschreibung: 'Zyklen 75 % schneller', kosten: 4, voraussetzung: 'temp3' },
+  { id: 'temp5', ast: 'Tempo', name: 'Lichttempo',   beschreibung: 'Zyklen 90 % schneller', kosten: 5, voraussetzung: 'temp4' },
   { id: 'tempinf', ast: 'Tempo', name: 'Dauerschub', beschreibung: '+5 % Ertrag je Stufe', kosten: 5, voraussetzung: 'temp5', endlos: true },
   // Ast Kapital — Reset-Boni und Komfort
   { id: 'k1', ast: 'Kapital', name: 'Welt-Rabatt',       beschreibung: 'Welten −30 % günstiger',   kosten: 1, voraussetzung: null },
