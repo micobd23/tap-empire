@@ -2,7 +2,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { useGame } from '../store'
 import { BALKEN_VOLL_AB_MS, BUSINESS_MAP, MEILENSTEINE, UPGRADES_BY_BUSINESS, WELT_MAP } from '../game/config'
-import { ertragProZyklus, kostenFuer, maxKaufbar, tempoMeilensteinFaktor } from '../game/economy'
+import { ertragProZyklus, kostenFuer, maxKaufbar, tempoMeilensteinFaktor, upgradeEffekte } from '../game/economy'
 import { globalerEinkommensMultiplikator } from '../game/prestige'
 import { talentEffekte } from '../game/talents'
 import { formatGeld, formatWartezeit } from '../game/format'
@@ -52,7 +52,8 @@ export function BusinessCard({ id }: { id: string }) {
 
   const aktiv = anzahl > 0
   const tempoFaktor = tempoMeilensteinFaktor(anzahl)
-  const dauer = b.dauerMs * zyklusFaktor * tempoFaktor
+  const { ertragFaktor, tempoDivisor } = upgradeEffekte(id, gekaufteUpgrades)
+  const dauer = (b.dauerMs / tempoDivisor) * zyklusFaktor * tempoFaktor
   const laeuftGerade = aktiv && (hatManager || laeuft)
   // Nur im Automatik-Betrieb (Manager) den Balken bei Sekundentakt einfach voll lassen,
   // statt ihn flackern zu lassen. Tippt man selbst, läuft er bewusst durch — als Feedback.
@@ -61,7 +62,7 @@ export function BusinessCard({ id }: { id: string }) {
     : hatManager && dauer <= BALKEN_VOLL_AB_MS
       ? 100
       : Math.min(100, (fortschrittMs / dauer) * 100)
-  const ertrag = ertragProZyklus(b, Math.max(anzahl, 1)) * mult
+  const ertrag = ertragProZyklus(b, Math.max(anzahl, 1), ertragFaktor) * mult
   // Pro-Sekunde-Wert für die Anzeige — macht schnelle und langsame Businesses vergleichbar.
   const ertragProSekunde = ertrag / (dauer / 1000)
   const managerKosten = b.managerKosten * (1 - managerRabatt)
